@@ -1,0 +1,104 @@
+services:
+  postgis:
+    image: postgis/postgis:17-3.5-alpine
+    container_name: postgis
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgis
+      POSTGRES_PASSWORD: postgis
+      POSTGRES_DB: postgis
+      PGPASSWORD: postgis
+    volumes:
+      - ./scripts/postgis.sql:/postgis.sql
+      - ./scripts/postgis_ddl.sql:/postgis_ddl.sql
+    command: ["postgres", "-c", "wal_level=logical"]
+  mysql-db:
+    image: mysql:9.1.0
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sedona
+      MYSQL_USER: sedona
+      MYSQL_PASSWORD: sedona
+    volumes:
+      - ./scripts/mysql_ddl.sql:/mysql_ddl.sql
+  oracle-db:
+    image: gvenzl/oracle-free
+    container_name: oracle
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: sedona
+      APP_USER: sedona
+      APP_USER_PASSWORD: sedona
+    volumes:
+      - ./scripts/oracle_ddl.sql:/opt/oracle/oracle_ddl.sql
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/init-mongo.js
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  debezium:
+    image: debezium/connect:2.3
+    container_name: debezium
+    restart: always
+    ports:
+      - '8083:8083'
+    environment:
+      BOOTSTRAP_SERVERS: kafka:29092
+      GROUP_ID: 1
+      ENABLE_DEBEZIUM_SCRIPTING: 'true'
+      CONFIG_STORAGE_TOPIC: sedona_configs
+      OFFSET_STORAGE_TOPIC: sedona_offsets
+      STATUS_STORAGE_TOPIC: sedona_statuses
+    links:
+      - kafka
+      - postgis
+  ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    environment:
+      DYNAMIC_CONFIG_ENABLED: true
+    ports:
+      - 8089:8080
+  minio:
+    image: quay.io/minio/minio:latest
+    command: server /data --console-address ":9001"
+    container_name: sedona_minio
+    volumes:
+      - ./minio-data:/data
+      - ./sources:/app/sources
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: sedona
+      MINIO_ROOT_PASSWORD: sedona_password
+    healthcheck:
+      test: [ "CMD", "mc", "ready", "local" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
