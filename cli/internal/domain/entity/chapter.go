@@ -1,0 +1,19 @@
+package entity
+
+type Chapter int
+type SubChapter int
+
+const (
+	Chapter1 Chapter = iota + 1
+	Chapter2
+	Chapter3
+	Chapter4
+	Chapter5
+)
+
+const (
+	SubChapter1 SubChapter = iota + 1
+	SubChapter2
+	SubChapter3
+	SubChapter4
+)

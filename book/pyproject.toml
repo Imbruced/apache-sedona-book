@@ -1,0 +1,16 @@
+[project]
+name = "book"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "apache-sedona[kepler-map]>=1.7.1",
+    "geopandas>=1.0.1",
+    "notebook>=7.3.3",
+    "numpy>=2.2.4",
+    "overturemaps>=0.14.0",
+    "pyarrow>=19.0.1",
+    "pyspark>=3.5.5",
+    "rasterio>=1.4.3",
+]
