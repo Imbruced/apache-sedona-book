@@ -1,0 +1,56 @@
+title: Working With Geospatial Data At Scale\:\ Loading Data In Apache Sedona
+id: chapter3
+sections:
+  - title: Loading vector data formats
+    id: loading-vector-data-formats
+    sections:
+      - title: Vector Data Serialization
+        id: vector-data-serialization
+      - title: Apache Sedona Serialization
+        id: apache-sedona-serialization
+      - title: Differences between vector data formats
+        id: differences-between-vector-data-formats
+      - title: Distributed files vs. non-distributed files
+        id: distributed-files-vs-non-distributed-files
+      - title: Reading Flat Files
+        id: reading-flat-files
+      - title: Reading Shapefiles
+        id: reading-shapefiles
+      - title: Reading GeoJSON
+        id: reading-geojson
+      - title: Reading GeoPackage
+        id: reading-geopackage
+      - title: Reading GeoParquet
+        id: reading-geoparquet
+  - title: Introduction To Raster Data Formats (GeoTif)
+    id: introduction-to-raster-data-formats-geotif
+    sections:
+      - title: How Sedona processes rasters
+        id: how-sedona-processes-rasters
+  - title: Loading Data From Databases
+    id: loading-data-from-databases
+    sections:
+      - title: Reading from PostgreSQL (PostGIS)
+        id: reading-from-postgresql-postgis
+        images:
+            - image: postgis
+              scripts:
+                - postgis.sh
+              volumes:
+                - postgis.sql
+                - postgis_ddl.sql
+      - title: Reading from MySQL
+        id: reading-from-mysql
+      - title: Reading from MongoDB
+        id: reading-from-mongodb
+      - title: Data Synchronization
+        id: data-synchronization
+      - title: CDC with PostgreSQL to GeoParquet source
+        id: cdc-with-postgresql-to-geoparquet-source
+  - title: Hands-On Use Case\:\ NYC Taxi Data Analysis
+    id: hands-on-use-case-nyc-taxi-data-analysis
+    sections:
+      - title: The most popular areas for pickups and dropoffs
+        id: the-most-popular-areas-for-pickups-and-dropoffs
+      - title: Ten most popular routes
+        id: ten-most-popular-routes
