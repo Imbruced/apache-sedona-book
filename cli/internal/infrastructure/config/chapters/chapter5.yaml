@@ -1,0 +1,71 @@
+title: Raster Data Analysis
+id: chapter5
+sections:
+  - title: The Raster Data Model
+    id: the-raster-data-model
+  - title: Raster SQL and Raster Data Manipulation
+    id: raster-sql-and-raster-data-manipulation
+#  - title: Zonal Statistics
+#    id: zonal-statistics
+#    images:
+#        - image: minio
+#          post-init-command:
+#            - /bin/bash
+#            - /app/sources/source_data/scripts/chapter5/copy_minio.sh
+#          volumes:
+#            - source_data/ny_rail_road_and_aviation_noise
+#            - source_data/ny_redfin_sold_offers
+#            - source_data/scripts/chapter5
+#        - image: sedona
+#          volumes:
+#            - chapter5/Zonal Statistics.ipynb
+#            - chapter5/images
+#  - title: Map Algebra
+#    id: map-algebra
+#    images:
+#      - image: minio
+#        post-init-command:
+#          - /bin/bash
+#          - /app/sources/source_data/scripts/chapter5/copy_minio.sh
+#        volumes:
+#          - source_data/swir_b11_tiles
+#          - source_data/nir_b08_tiles
+#          - source_data/scripts/chapter5
+#      - image: sedona
+#        volumes:
+#          - chapter5/MapAlgebra.ipynb
+#          - chapter5/images
+#  - title: Joining raster data with vector data
+#    id: joining-raster-data-with-vector-data
+#    images:
+#      - image: minio
+#        post-init-command:
+#          - /bin/bash
+#          - /app/sources/source_data/scripts/chapter5/copy_minio.sh
+#        volumes:
+#          - source_data/scripts/chapter5
+#          - source_data/world_population_raster
+#          - source_data/fdi_data
+#      - image: sedona
+#        volumes:
+#          - chapter5/RasterJoin.ipynb
+#          - chapter5/images
+  - title: Hands-On Use Case\:\ Insurance Risk Modeling
+    id: hands-on-use-case-insurance-risk-modeling
+    images:
+      - image: minio
+        post-init-command:
+          - /bin/bash
+          - /app/sources/source_data/scripts/chapter5/copy_minio.sh
+        volumes:
+          - source_data/scripts/chapter5
+          - source_data/world_population_raster
+          - source_data/buildings
+          - source_data/fire_risk
+          - source_data/flood
+          - source_data/infrastructure
+          - source_data/places
+      - image: sedona
+        volumes:
+          - chapter5/Use Case Insurance Risk Modeling.ipynb
+          - chapter5/images
