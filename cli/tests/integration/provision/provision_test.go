@@ -23,7 +23,9 @@ func TestProvision(t *testing.T) {
 	ctx := context.Background()
 
 	err = containerService.StartContainers(ctx, &entity.RunPreRequisiteRequest{
-		Chapter: entity.Chapter5,
+		Chapter:    entity.Chapter5,
+		SubChapter: 0,
+		CopyData:   true,
 	})
 	assert.NoError(t, err)
 }

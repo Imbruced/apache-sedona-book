@@ -22,6 +22,7 @@ type ImageDependency struct {
 	Scripts         []string
 	Volumes         []string
 	PostInitCommand []string `yaml:"post-init-command"`
+	Data            []string
 }
 type ChapterStructure struct {
 	Title    string

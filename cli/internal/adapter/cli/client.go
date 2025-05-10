@@ -72,6 +72,8 @@ func (c *Client) listContainers(ctx context.Context) *cobra.Command {
 
 func (c *Client) provision(ctx context.Context) *cobra.Command {
 	var chapter string
+	var copyData bool
+	var subChapter int
 
 	var command = &cobra.Command{
 		Use:  "provision",
@@ -79,6 +81,8 @@ func (c *Client) provision(ctx context.Context) *cobra.Command {
 	}
 
 	command.Flags().StringVarP(&chapter, "chapter", "c", "", "Chapter to provision")
+	command.Flags().Bool("copy", copyData, "Copy the data to minio bucket if applicable")
+	command.Flags().IntVarP(&subChapter, "sub-chapter", "s", 0, "Selected Sub chapter, if empty full chapter will be provisioned")
 
 	command.Run = func(cmd *cobra.Command, args []string) {
 		var chapterDomain entity.Chapter
@@ -94,7 +98,9 @@ func (c *Client) provision(ctx context.Context) *cobra.Command {
 		}
 
 		err := c.containerService.StartContainers(ctx, &entity.RunPreRequisiteRequest{
-			Chapter: chapterDomain,
+			Chapter:    chapterDomain,
+			SubChapter: entity.SubChapter(subChapter),
+			CopyData:   copyData,
 		})
 		if err != nil {
 			cmd.PrintErrf("Error starting containers: %v\n", err)
