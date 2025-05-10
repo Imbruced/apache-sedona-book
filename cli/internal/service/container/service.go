@@ -62,7 +62,9 @@ func (s *Service) Clear(ctx context.Context) error {
 
 func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreRequisiteRequest) error {
 	images, err := s.resolver.Resolve(ctx, &entity.ResolveRequest{
-		Chapter: request.Chapter,
+		Chapter:    request.Chapter,
+		LoadData:   request.CopyData,
+		SubChapter: request.SubChapter,
 	})
 	if err != nil {
 		return err
@@ -72,7 +74,6 @@ func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreReq
 	wg.Add(len(images))
 
 	println("Starting containers...")
-	// Start all containers in parallel
 
 	for _, image := range images {
 		fmt.Printf("Starting container: %s\n", image.Image)

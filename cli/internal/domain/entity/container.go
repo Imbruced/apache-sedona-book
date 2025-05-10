@@ -38,5 +38,7 @@ type CreateContainerResponse struct {
 }
 
 type RunPreRequisiteRequest struct {
-	Chapter Chapter
+	Chapter    Chapter
+	SubChapter SubChapter
+	CopyData   bool
 }
