@@ -31,6 +31,7 @@ type ContainerRunRequest struct {
 	EnvVariables       EnvVariables
 	HealthCheck        HealthCheck
 	PostInitCommand    []string
+	NetworkID          string
 }
 
 type CreateContainerResponse struct {
@@ -41,4 +42,16 @@ type RunPreRequisiteRequest struct {
 	Chapter    Chapter
 	SubChapter SubChapter
 	CopyData   bool
+}
+
+type CreateNetworkRequest struct {
+	Name string
+}
+
+type CreateNetworkResponse struct {
+	ID string
+}
+
+type Network struct {
+	ID string
 }

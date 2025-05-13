@@ -1,0 +1,19 @@
+title: Geospatial Data Science And Machine Learning
+id: chapter5
+sections:
+  - title: Geospatial Clustering With Apache Sedona
+    id: geospatial-clustering-with-apache-sedona
+    images:
+      - image: sedona
+        volumes:
+          - chapter7/ClusteringWithApacheSedona.ipynb
+          - chapter7/images
+          - source_data/density_points
+  - title: Outlier Detection
+    id: outlier-detection
+    images:
+      - image: sedona
+        volumes:
+          - chapter7/OutlierDetection.ipynb
+          - chapter7/images
+          - source_data/density_points
