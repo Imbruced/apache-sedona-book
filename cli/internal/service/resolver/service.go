@@ -4,7 +4,14 @@ import (
 	"cli/internal/domain/entity"
 	"cli/internal/infrastructure/config"
 	"context"
+	"fmt"
+	"os"
 	"strings"
+)
+
+const (
+	dataDir   = "source_data"
+	scriptDir = "scripts"
 )
 
 type Service struct {
@@ -21,9 +28,13 @@ func (s *Service) Resolve(ctx context.Context, request *entity.ResolveRequest) (
 	}
 
 	requests := make([]*entity.ContainerRunRequest, 0, len(cfg.ChapterStructure.Images))
+	structure := cfg.ChapterStructure
+	if request.SubChapter != 0 {
+		structure = structure.Sections[request.SubChapter-1]
+	}
 
-	images := s.resolveImages(cfg.ChapterStructure)
-	aggImages := s.aggregateImages(images)
+	images := s.resolveImages(structure)
+	aggImages := s.aggregateImages(request.LoadData, images)
 
 	for _, image := range aggImages {
 		imageLocation := cfg.Images.Images[image.Image]
@@ -41,15 +52,21 @@ func (s *Service) Resolve(ctx context.Context, request *entity.ResolveRequest) (
 		}
 
 		println("Image: ", imageLocation.MountPath)
+		env := cfg.AppConfig.Env.ToMap()
+
+		for envVar, envVarValue := range imageLocation.Environment {
+			env[envVar] = envVarValue
+		}
+
 		requests = append(requests, &entity.ContainerRunRequest{
 			Image:              imageLocation.Name,
 			ContainerName:      "",
 			Command:            imageLocation.Command,
 			ExposedPorts:       exposedPorts,
-			MountPathHost:      "/Users/pawelkocinski/Desktop/projects/sedona-book/apache-sedona-book/book",
+			MountPathHost:      os.Getenv("SEDONA_DATA_HOME"),
 			MountPathContainer: imageLocation.MountPath,
 			MountFiles:         image.Volumes,
-			EnvVariables:       imageLocation.Environment,
+			EnvVariables:       env,
 			HealthCheck: entity.HealthCheck{
 				Test: imageLocation.HealthCheck.Test,
 			},
@@ -76,7 +93,7 @@ func (s *Service) resolveImages(structure config.ChapterStructure) []config.Imag
 	return images
 }
 
-func (s *Service) aggregateImages(images []config.ImageDependency) []config.ImageDependency {
+func (s *Service) aggregateImages(loadData bool, images []config.ImageDependency) []config.ImageDependency {
 	result := make([]config.ImageDependency, 0, len(images))
 	seen := make(map[string]config.ImageDependency)
 	for _, image := range images {
@@ -84,10 +101,12 @@ func (s *Service) aggregateImages(images []config.ImageDependency) []config.Imag
 
 		if !ok {
 			seen[image.Image] = image
-			continue
+			currentElement = image
 		}
 
-		currentElement.Volumes = getUniqueElements(append(currentElement.Volumes, image.Volumes...))
+		currentElement.Volumes = getUniqueElements(append(
+			currentElement.Volumes, s.resolveVolumes(loadData, image)...,
+		))
 		currentElement.PostInitCommand = getUniqueElements(append(currentElement.PostInitCommand, image.PostInitCommand...))
 		currentElement.Scripts = getUniqueElements(append(currentElement.Scripts, image.Scripts...))
 
@@ -99,6 +118,26 @@ func (s *Service) aggregateImages(images []config.ImageDependency) []config.Imag
 	}
 
 	return result
+}
+
+func (s *Service) resolveVolumes(loadData bool, deps config.ImageDependency) []string {
+	volumes := make([]string, 0, len(deps.Volumes))
+
+	for _, volume := range deps.Volumes {
+		volumes = append(volumes, volume)
+	}
+
+	if loadData {
+		for _, data := range deps.Data {
+			volumes = append(volumes, fmt.Sprintf("%s/%s", dataDir, data))
+		}
+
+		for _, script := range deps.Scripts {
+			volumes = append(volumes, fmt.Sprintf("%s/%s", scriptDir, script))
+		}
+	}
+
+	return volumes
 }
 
 func getUniqueElements(elements []string) []string {

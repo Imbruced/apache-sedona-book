@@ -1,5 +1,7 @@
 package entity
 
 type ResolveRequest struct {
-	Chapter Chapter
+	Chapter    Chapter
+	LoadData   bool
+	SubChapter SubChapter
 }

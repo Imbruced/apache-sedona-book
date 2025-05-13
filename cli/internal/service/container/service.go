@@ -2,8 +2,9 @@ package container
 
 import (
 	"cli/internal/domain/entity"
+	domainerrors "cli/internal/domain/errors"
 	"context"
-	"fmt"
+	"errors"
 	"github.com/docker/docker/api/types/container"
 	"sync"
 	"time"
@@ -17,6 +18,9 @@ type Client interface {
 	Wait(ctx context.Context, containerID string) (<-chan container.WaitResponse, <-chan error)
 	IsHealthy(ctx context.Context, containerID string) (bool, error)
 	RunScript(ctx context.Context, containerID string, command []string) error
+	CreateNetwork(ctx context.Context, request *entity.CreateNetworkRequest) (*entity.CreateNetworkResponse, error)
+	GetNetworkID(ctx context.Context, app string) (*entity.Network, error)
+	RemoveNetwork(ctx context.Context, networkID string) error
 }
 
 type Resolver interface {
@@ -57,27 +61,50 @@ func (s *Service) Clear(ctx context.Context) error {
 		}
 	}
 
+	network, err := s.client.GetNetworkID(ctx, "sedona")
+	if err != nil && errors.Is(err, domainerrors.ErrNetworkNotFound) {
+		return nil
+	}
+
+	if err != nil {
+		return err
+	}
+
+	err = s.client.RemoveNetwork(ctx, network.ID)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreRequisiteRequest) error {
 	images, err := s.resolver.Resolve(ctx, &entity.ResolveRequest{
-		Chapter: request.Chapter,
+		Chapter:    request.Chapter,
+		LoadData:   request.CopyData,
+		SubChapter: request.SubChapter,
 	})
 	if err != nil {
 		return err
 	}
 
+	// Create a network for the containers
+	networkRequest := &entity.CreateNetworkRequest{
+		Name: "sedona",
+	}
+
+	networkResponse, err := s.client.CreateNetwork(ctx, networkRequest)
+	if err != nil {
+		return nil
+	}
+
 	wg := &sync.WaitGroup{}
 	wg.Add(len(images))
 
-	println("Starting containers...")
-	// Start all containers in parallel
-
 	for _, image := range images {
-		fmt.Printf("Starting container: %s\n", image.Image)
 		go func() {
 			defer wg.Done()
+			image.NetworkID = networkResponse.ID
 			containerInfo, err := s.client.Run(ctx, image)
 			if err != nil {
 				println("Error starting container:", err.Error())
@@ -89,13 +116,15 @@ func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreReq
 				return
 			}
 
-			println("Container health status:", healthy)
-
 			if !healthy {
 				return
 			}
 
 			println("Container started successfully:", containerInfo.ID)
+			if len(image.PostInitCommand) == 0 {
+				return
+			}
+
 			err = s.client.RunScript(ctx, containerInfo.ID, image.PostInitCommand)
 			if err != nil {
 				println("Error running script:", err.Error())
@@ -120,8 +149,6 @@ func (s *Service) WaitUntilHealthy(ctx context.Context, containerID string) (boo
 		case <-ctxWithTimeout.Done():
 			return false, nil
 		case <-sleepTicker.C:
-			println("Container health status:", containerID)
-
 			healthy, err := s.client.IsHealthy(ctxWithTimeout, containerID)
 			if err != nil {
 				return false, err
@@ -130,14 +157,6 @@ func (s *Service) WaitUntilHealthy(ctx context.Context, containerID string) (boo
 			if healthy {
 				return true, nil
 			}
-
-			logs, err := s.client.ReadLogs(ctx, containerID)
-			if err != nil {
-				return false, err
-			}
-
-			println("Container logs:", logs)
-			println("Waiting for container to be healthy...")
 		}
 	}
 }

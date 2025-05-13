@@ -1,5 +1,29 @@
 package config
 
+type AppConfig struct {
+	Data DataConfig
+	Env  EnvConfigs
+}
+
+type EnvConfigs []EnvConfig
+
+func (e EnvConfigs) ToMap() map[string]string {
+	envMap := make(map[string]string, len(e))
+	for _, env := range e {
+		envMap[env.Name] = env.Value
+	}
+	return envMap
+}
+
+type EnvConfig struct {
+	Name  string
+	Value string
+}
+
+type DataConfig struct {
+	Copy bool `yaml:"copy"`
+}
+
 type ImagesConfig struct {
 	Images map[string]Image
 }
@@ -22,6 +46,7 @@ type ImageDependency struct {
 	Scripts         []string
 	Volumes         []string
 	PostInitCommand []string `yaml:"post-init-command"`
+	Data            []string
 }
 type ChapterStructure struct {
 	Title    string
@@ -33,4 +58,5 @@ type ChapterStructure struct {
 type Config struct {
 	ChapterStructure ChapterStructure
 	Images           ImagesConfig
+	AppConfig        AppConfig
 }

@@ -59,7 +59,6 @@ func Test(t *testing.T) {
 	wg.Add(len(dataToDownload))
 
 	for _, obj := range dataToDownload {
-		println(obj)
 		go func(obj string) {
 			defer wg.Done()
 			data, err := s3Client.GetObject(context.Background(), &s3.GetObjectInput{
@@ -81,21 +80,28 @@ func Test(t *testing.T) {
 
 			defer data.Body.Close()
 
-			println("Size:", len(bodyBytes))
-
 			fileName := obj[strings.LastIndex(obj, "/")+1:]
 			err = ioutil.WriteFile(fileName, bodyBytes, 0644)
 			if err != nil {
 				println(err.Error())
 			}
 
-			println("Downloaded:", fileName)
-
 		}(obj)
 
 	}
 
 	wg.Wait()
+}
 
-	println(len(res.Contents))
+func TestContainer_RemoveNetwork(t *testing.T) {
+	cli, err := client.NewClientWithOpts(
+		client.FromEnv,
+		client.WithAPIVersionNegotiation(),
+	)
+	assert.NoError(t, err)
+
+	containerClient := NewContainer(cli)
+
+	err = containerClient.RemoveNetwork(ctx, "test_network")
+	assert.Error(t, err)
 }
