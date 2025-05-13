@@ -13,6 +13,7 @@ func NewConfig(chapter entity.Chapter) (*Config, error) {
 	cfg := Config{}
 	var chapterStructure ChapterStructure
 	var Images ImagesConfig
+	var appConfig AppConfig
 
 	_, b, _, _ := runtime.Caller(0)
 	rootPath := filepath.Dir(b)
@@ -26,6 +27,11 @@ func NewConfig(chapter entity.Chapter) (*Config, error) {
 		"%s/chapters/%s.yaml",
 		rootPath,
 		resolveChapter(chapter),
+	)
+
+	appConfigPath := fmt.Sprintf(
+		"%s/config.yaml",
+		rootPath,
 	)
 
 	chapterConfigContent, err := os.ReadFile(chapterConfigPath)
@@ -46,8 +52,20 @@ func NewConfig(chapter entity.Chapter) (*Config, error) {
 		return nil, err
 	}
 
+	appConfigContent, err := os.ReadFile(appConfigPath)
+	if err != nil {
+		return nil, err
+	}
+
+	replaced := os.ExpandEnv(string(appConfigContent))
+
+	if err = yaml.Unmarshal([]byte(replaced), &appConfig); err != nil {
+		return nil, err
+	}
+
 	cfg.ChapterStructure = chapterStructure
 	cfg.Images = Images
+	cfg.AppConfig = appConfig
 
 	return &cfg, nil
 }
@@ -64,6 +82,16 @@ func resolveChapter(chapter entity.Chapter) string {
 		return "chapter4"
 	case entity.Chapter5:
 		return "chapter5"
+	case entity.Chapter6:
+		return "chapter6"
+	case entity.Chapter7:
+		return "chapter7"
+	case entity.Chapter8:
+		return "chapter8"
+	case entity.Chapter9:
+		return "chapter9"
+	case entity.Chapter10:
+		return "chapter10"
 	default:
 		return ""
 	}

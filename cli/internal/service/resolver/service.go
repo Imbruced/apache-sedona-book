@@ -5,6 +5,7 @@ import (
 	"cli/internal/infrastructure/config"
 	"context"
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -51,15 +52,21 @@ func (s *Service) Resolve(ctx context.Context, request *entity.ResolveRequest) (
 		}
 
 		println("Image: ", imageLocation.MountPath)
+		env := cfg.AppConfig.Env.ToMap()
+
+		for envVar, envVarValue := range imageLocation.Environment {
+			env[envVar] = envVarValue
+		}
+
 		requests = append(requests, &entity.ContainerRunRequest{
 			Image:              imageLocation.Name,
 			ContainerName:      "",
 			Command:            imageLocation.Command,
 			ExposedPorts:       exposedPorts,
-			MountPathHost:      "/Users/pawelkocinski/Desktop/projects/sedona-book/apache-sedona-book/book",
+			MountPathHost:      os.Getenv("SEDONA_DATA_HOME"),
 			MountPathContainer: imageLocation.MountPath,
 			MountFiles:         image.Volumes,
-			EnvVariables:       imageLocation.Environment,
+			EnvVariables:       env,
 			HealthCheck: entity.HealthCheck{
 				Test: imageLocation.HealthCheck.Test,
 			},

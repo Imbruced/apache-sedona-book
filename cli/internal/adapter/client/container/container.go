@@ -2,6 +2,7 @@ package container
 
 import (
 	"cli/internal/domain/entity"
+	domainerrors "cli/internal/domain/errors"
 	"context"
 	"fmt"
 	"github.com/docker/docker/api/types/container"
@@ -67,29 +68,69 @@ func (c *Container) RunScript(ctx context.Context, containerID string, command [
 	return nil
 }
 
+func (c *Container) GetNetworkID(ctx context.Context, app string) (*entity.Network, error) {
+	filterArgs := filters.NewArgs()
+	filterArgs.Add("label", fmt.Sprintf("app=%s", app))
+
+	networks, err := c.cli.NetworkList(ctx, network.ListOptions{
+		Filters: filterArgs,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if len(networks) == 0 {
+		return nil, domainerrors.ErrNetworkNotFound
+	}
+
+	if len(networks) > 1 {
+		return nil, fmt.Errorf("multiple networks found")
+	}
+
+	networkInfo := networks[0]
+
+	return &entity.Network{
+		ID: networkInfo.ID,
+	}, nil
+}
+
+func (c *Container) RemoveNetwork(ctx context.Context, networkID string) error {
+	err := c.cli.NetworkRemove(ctx, networkID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Container) CreateNetwork(ctx context.Context, request *entity.CreateNetworkRequest) (*entity.CreateNetworkResponse, error) {
+	n, err := c.cli.NetworkCreate(ctx, "sedona", network.CreateOptions{
+		Driver:     "bridge",
+		Internal:   false,
+		Attachable: true,
+		Labels: map[string]string{
+			"app": request.Name,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &entity.CreateNetworkResponse{
+		ID: n.ID,
+	}, nil
+}
+
 func (c *Container) Run(ctx context.Context, request *entity.ContainerRunRequest) (*entity.CreateContainerResponse, error) {
 	portMap := make(nat.PortMap, len(request.ExposedPorts))
 	exposedPorts := make(nat.PortSet, len(request.ExposedPorts))
 	imageName := strings.Split(request.Image, ":")[0]
-	// get the last element from split
 	parts := strings.Split(imageName, "/")
 
 	imageName = parts[len(parts)-1]
 
 	for _, containerPort := range request.ExposedPorts {
 		exposedPorts[nat.Port(containerPort)] = struct{}{}
-	}
-
-	n, err := c.cli.NetworkCreate(ctx, "sedona", network.CreateOptions{
-		Driver:     "bridge",
-		Internal:   false,
-		Attachable: true,
-		Labels: map[string]string{
-			"app": "sedona",
-		},
-	})
-	if err != nil {
-		//return nil, err
 	}
 
 	for hostPort, containerPort := range request.ExposedPorts {
@@ -125,7 +166,7 @@ func (c *Container) Run(ctx context.Context, request *entity.ContainerRunRequest
 			EndpointsConfig: map[string]*network.EndpointSettings{
 				"sedona": {
 					Aliases:   []string{imageName},
-					NetworkID: n.ID,
+					NetworkID: request.NetworkID,
 				},
 			},
 		},
@@ -224,11 +265,6 @@ func (c *Container) IsHealthy(ctx context.Context, containerID string) (bool, er
 	result, err := c.cli.ContainerInspect(ctx, containerID)
 	if err != nil {
 		return false, err
-	}
-
-	println(result.State.Health == nil)
-	if result.State.Health != nil {
-		println(result.State.Health.Status)
 	}
 
 	return result.State.Health != nil && result.State.Health.Status == "healthy", nil
