@@ -55,3 +55,7 @@ type CreateNetworkResponse struct {
 type Network struct {
 	ID string
 }
+
+type StartContainerResponse struct {
+	OpenUrl *string
+}
