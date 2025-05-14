@@ -38,6 +38,9 @@ func (s *Service) Resolve(ctx context.Context, request *entity.ResolveRequest) (
 
 	for _, image := range aggImages {
 		imageLocation := cfg.Images.Images[image.Image]
+		if strings.HasPrefix(imageLocation.Name, "quay.io/minio") && !request.LoadData {
+			continue
+		}
 
 		exposedPorts := make(map[string]string, len(imageLocation.Ports))
 		for _, port := range imageLocation.Ports {
