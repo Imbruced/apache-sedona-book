@@ -51,7 +51,6 @@ func (s *Service) Resolve(ctx context.Context, request *entity.ResolveRequest) (
 			exposedPorts[hostPort] = containerPort
 		}
 
-		println("Image: ", imageLocation.MountPath)
 		env := cfg.AppConfig.Env.ToMap()
 
 		for envVar, envVarValue := range imageLocation.Environment {

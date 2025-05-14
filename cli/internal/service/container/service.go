@@ -10,6 +10,13 @@ import (
 	"time"
 )
 
+const (
+	SedonaNetworkName   = "sedona"
+	SedonaLabelName     = "sedona"
+	HealthCheckTimeout  = 20 * time.Second
+	HealthCheckTickTime = time.Second * 2
+)
+
 type Client interface {
 	ListContainers(ctx context.Context) ([]*entity.ContainerMetadata, error)
 	Clear(ctx context.Context, metadata *entity.ContainerMetadata) error
@@ -19,7 +26,7 @@ type Client interface {
 	IsHealthy(ctx context.Context, containerID string) (bool, error)
 	RunScript(ctx context.Context, containerID string, command []string) error
 	CreateNetwork(ctx context.Context, request *entity.CreateNetworkRequest) (*entity.CreateNetworkResponse, error)
-	GetNetworkID(ctx context.Context, app string) (*entity.Network, error)
+	GetNetworkID(ctx context.Context) (*entity.Network, error)
 	RemoveNetwork(ctx context.Context, networkID string) error
 }
 
@@ -54,14 +61,14 @@ func (s *Service) Clear(ctx context.Context) error {
 		return err
 	}
 
-	for _, container := range containers {
-		err = s.client.Clear(ctx, container)
+	for _, c := range containers {
+		err = s.client.Clear(ctx, c)
 		if err != nil {
 			return err
 		}
 	}
 
-	network, err := s.client.GetNetworkID(ctx, "sedona")
+	network, err := s.client.GetNetworkID(ctx)
 	if err != nil && errors.Is(err, domainerrors.ErrNetworkNotFound) {
 		return nil
 	}
@@ -88,14 +95,11 @@ func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreReq
 		return err
 	}
 
-	// Create a network for the containers
-	networkRequest := &entity.CreateNetworkRequest{
-		Name: "sedona",
-	}
-
-	networkResponse, err := s.client.CreateNetwork(ctx, networkRequest)
+	networkResponse, err := s.client.CreateNetwork(ctx, &entity.CreateNetworkRequest{
+		Name: SedonaNetworkName,
+	})
 	if err != nil {
-		return nil
+		return err
 	}
 
 	wg := &sync.WaitGroup{}
@@ -120,7 +124,6 @@ func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreReq
 				return
 			}
 
-			println("Container started successfully:", containerInfo.ID)
 			if len(image.PostInitCommand) == 0 {
 				return
 			}
@@ -139,10 +142,10 @@ func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreReq
 }
 
 func (s *Service) WaitUntilHealthy(ctx context.Context, containerID string) (bool, error) {
-	ctxWithTimeout, cancel := context.WithTimeout(ctx, time.Second*20)
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, HealthCheckTimeout)
 	defer cancel()
 
-	sleepTicker := time.NewTicker(time.Second * 2)
+	sleepTicker := time.NewTicker(HealthCheckTickTime)
 
 	for {
 		select {

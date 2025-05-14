@@ -1,10 +1,12 @@
 package cli
 
 import (
+	"cli/internal/adapter/cli/animation"
 	"cli/internal/adapter/cli/transform"
 	"cli/internal/domain/entity"
 	"context"
 	"github.com/spf13/cobra"
+	"time"
 )
 
 type ContainerService interface {
@@ -38,13 +40,16 @@ func (c *Client) clear(ctx context.Context) *cobra.Command {
 	}
 
 	command.Run = func(cmd *cobra.Command, args []string) {
+		go animation.BroomSweepMultipleAnimation(ctx)
+		time.Sleep(time.Millisecond * 500)
+
 		err := c.containerService.Clear(ctx)
 		if err != nil {
 			cmd.PrintErrf("Error clearing containers: %v\n", err)
 			return
 		}
 
-		cmd.Println("Containers cleared successfully.")
+		cmd.Println("\n ✅ Containers cleared successfully.")
 	}
 
 	return command
@@ -85,6 +90,7 @@ func (c *Client) provision(ctx context.Context) *cobra.Command {
 	command.Flags().IntVarP(&subChapter, "sub-chapter", "s", 0, "Selected Sub chapter, if empty full chapter will be provisioned")
 
 	command.Run = func(cmd *cobra.Command, args []string) {
+		go animation.Provisioning(ctx)
 		var chapterDomain entity.Chapter
 
 		if chapter != "" {
@@ -107,7 +113,7 @@ func (c *Client) provision(ctx context.Context) *cobra.Command {
 			return
 		}
 
-		cmd.Println("Containers started successfully.")
+		cmd.Println("\n 🚀 Containers started successfully.")
 	}
 
 	return command
