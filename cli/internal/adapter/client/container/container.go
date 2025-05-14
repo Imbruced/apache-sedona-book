@@ -249,7 +249,7 @@ func (c *Container) ListContainers(ctx context.Context) ([]*entity.ContainerMeta
 	for _, cn := range result {
 		containers = append(containers, &entity.ContainerMetadata{
 			ID:    cn.ID,
-			Name:  cn.Names[0],
+			Name:  cn.Image,
 			State: cn.State,
 		})
 	}

@@ -2,6 +2,7 @@ package cli
 
 import (
 	"cli/internal/adapter/cli/animation"
+	"cli/internal/adapter/cli/browser"
 	"cli/internal/adapter/cli/transform"
 	"cli/internal/domain/entity"
 	"context"
@@ -12,7 +13,7 @@ import (
 type ContainerService interface {
 	ListContainers(ctx context.Context) ([]*entity.ContainerMetadata, error)
 	Clear(ctx context.Context) error
-	StartContainers(ctx context.Context, request *entity.RunPreRequisiteRequest) error
+	StartContainers(ctx context.Context, request *entity.RunPreRequisiteRequest) (*entity.StartContainerResponse, error)
 }
 
 type Client struct {
@@ -68,7 +69,7 @@ func (c *Client) listContainers(ctx context.Context) *cobra.Command {
 		}
 
 		for _, container := range containers {
-			cmd.Printf("Container ID: %s, Name: %s, State: %s\n", container.ID, container.Name, container.State)
+			cmd.Printf("Name: %s State: %s 🐳\n", container.Name, container.State)
 		}
 	}
 
@@ -103,7 +104,7 @@ func (c *Client) provision(ctx context.Context) *cobra.Command {
 			chapterDomain = chapterDomainRaw
 		}
 
-		err := c.containerService.StartContainers(ctx, &entity.RunPreRequisiteRequest{
+		startContainersResponse, err := c.containerService.StartContainers(ctx, &entity.RunPreRequisiteRequest{
 			Chapter:    chapterDomain,
 			SubChapter: entity.SubChapter(subChapter),
 			CopyData:   copyData,
@@ -114,6 +115,10 @@ func (c *Client) provision(ctx context.Context) *cobra.Command {
 		}
 
 		cmd.Println("\n 🚀 Containers started successfully.")
+
+		if startContainersResponse.OpenUrl != nil {
+			browser.Open(*startContainersResponse.OpenUrl)
+		}
 	}
 
 	return command

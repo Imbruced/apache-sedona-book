@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"github.com/docker/docker/api/types/container"
+	"strings"
 	"sync"
 	"time"
 )
@@ -85,30 +86,39 @@ func (s *Service) Clear(ctx context.Context) error {
 	return nil
 }
 
-func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreRequisiteRequest) error {
+func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreRequisiteRequest) (*entity.StartContainerResponse, error) {
 	images, err := s.resolver.Resolve(ctx, &entity.ResolveRequest{
 		Chapter:    request.Chapter,
 		LoadData:   request.CopyData,
 		SubChapter: request.SubChapter,
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	networkResponse, err := s.client.CreateNetwork(ctx, &entity.CreateNetworkRequest{
 		Name: SedonaNetworkName,
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	wg := &sync.WaitGroup{}
 	wg.Add(len(images))
 
+	var url *string
+
 	for _, image := range images {
 		go func() {
 			defer wg.Done()
 			image.NetworkID = networkResponse.ID
+
+			if strings.HasPrefix(image.Image, "apache/sedona") {
+				notebookName := findNotebook(image.MountFiles)
+				rawURL := "http://localhost:8888/lab/tree/" + notebookName
+				url = &rawURL
+			}
+
 			containerInfo, err := s.client.Run(ctx, image)
 			if err != nil {
 				println("Error starting container:", err.Error())
@@ -138,7 +148,9 @@ func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreReq
 
 	wg.Wait()
 
-	return nil
+	return &entity.StartContainerResponse{
+		OpenUrl: url,
+	}, nil
 }
 
 func (s *Service) WaitUntilHealthy(ctx context.Context, containerID string) (bool, error) {
@@ -162,4 +174,14 @@ func (s *Service) WaitUntilHealthy(ctx context.Context, containerID string) (boo
 			}
 		}
 	}
+}
+
+func findNotebook(mounts []string) string {
+	for _, mount := range mounts {
+		if strings.HasSuffix(mount, ".ipynb") {
+			return mount
+		}
+	}
+
+	return ""
 }
