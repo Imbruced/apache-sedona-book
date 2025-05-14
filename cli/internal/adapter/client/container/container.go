@@ -17,6 +17,17 @@ import (
 	"time"
 )
 
+const (
+	SedonaNetworkName = "sedona"
+	SedonaLabelName   = "sedona"
+)
+
+var (
+	SedonaLabels = map[string]string{
+		"app": SedonaLabelName,
+	}
+)
+
 type Container struct {
 	cli *client.Client
 }
@@ -68,12 +79,15 @@ func (c *Container) RunScript(ctx context.Context, containerID string, command [
 	return nil
 }
 
-func (c *Container) GetNetworkID(ctx context.Context, app string) (*entity.Network, error) {
+func (c *Container) getFilterArgs() filters.Args {
 	filterArgs := filters.NewArgs()
-	filterArgs.Add("label", fmt.Sprintf("app=%s", app))
+	filterArgs.Add("label", fmt.Sprintf("app=%s", SedonaLabelName))
+	return filterArgs
+}
 
+func (c *Container) GetNetworkID(ctx context.Context) (*entity.Network, error) {
 	networks, err := c.cli.NetworkList(ctx, network.ListOptions{
-		Filters: filterArgs,
+		Filters: c.getFilterArgs(),
 	})
 	if err != nil {
 		return nil, err
@@ -108,9 +122,7 @@ func (c *Container) CreateNetwork(ctx context.Context, request *entity.CreateNet
 		Driver:     "bridge",
 		Internal:   false,
 		Attachable: true,
-		Labels: map[string]string{
-			"app": request.Name,
-		},
+		Labels:     SedonaLabels,
 	})
 	if err != nil {
 		return nil, err
@@ -146,10 +158,8 @@ func (c *Container) Run(ctx context.Context, request *entity.ContainerRunRequest
 		Env:          request.EnvVariables.ToEnvList(),
 		Image:        request.Image,
 		ExposedPorts: exposedPorts,
-		Labels: map[string]string{
-			"org.apache.sedona": "jupyterhub",
-		},
-		Cmd: request.Command,
+		Labels:       SedonaLabels,
+		Cmd:          request.Command,
 		Healthcheck: &container.HealthConfig{
 			Test:        request.HealthCheck.Test,
 			Interval:    5 * time.Second,
@@ -164,7 +174,7 @@ func (c *Container) Run(ctx context.Context, request *entity.ContainerRunRequest
 		},
 		&network.NetworkingConfig{
 			EndpointsConfig: map[string]*network.EndpointSettings{
-				"sedona": {
+				SedonaNetworkName: {
 					Aliases:   []string{imageName},
 					NetworkID: request.NetworkID,
 				},
@@ -229,7 +239,7 @@ func NewContainer(cli *client.Client) *Container {
 
 func (c *Container) ListContainers(ctx context.Context) ([]*entity.ContainerMetadata, error) {
 	result, err := c.cli.ContainerList(ctx, container.ListOptions{
-		Filters: filters.Args{},
+		Filters: c.getFilterArgs(),
 	})
 	if err != nil {
 		return nil, err
