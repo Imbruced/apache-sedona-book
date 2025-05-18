@@ -73,6 +73,8 @@ func (s *Service) Resolve(ctx context.Context, request *entity.ResolveRequest) (
 				Test: imageLocation.HealthCheck.Test,
 			},
 			PostInitCommand: image.PostInitCommand,
+			ShowInBrowser:   imageLocation.ShowInBrowser,
+			BrowserOpenPath: imageLocation.BrowserOpenPath,
 		})
 	}
 

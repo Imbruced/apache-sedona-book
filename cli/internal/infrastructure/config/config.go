@@ -33,12 +33,14 @@ type HealthCheckConfig struct {
 }
 
 type Image struct {
-	Name        string
-	Command     []string
-	Ports       []string
-	MountPath   string            `yaml:"mount-path"`
-	Environment map[string]string `yaml:"environment"`
-	HealthCheck HealthCheckConfig `yaml:"health-check"`
+	Name            string
+	Command         []string
+	Ports           []string
+	MountPath       string            `yaml:"mount-path"`
+	Environment     map[string]string `yaml:"environment"`
+	HealthCheck     HealthCheckConfig `yaml:"health-check"`
+	ShowInBrowser   bool              `yaml:"show-in-browser"`
+	BrowserOpenPath string            `yaml:"browser-open-path"`
 }
 
 type ImageDependency struct {
