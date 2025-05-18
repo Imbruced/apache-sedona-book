@@ -1,0 +1,18 @@
+spark-submit" \
+    --class org.apache.spark.sql.hive.thriftserver.HiveThriftServer2 \
+    --master "local" \
+    --deploy-mode client \
+    --name thriftServer \
+    --conf spark.sql.warehouse.dir="${SPARK_WAREHOUSE_DIR}" \
+    --conf spark.hadoop.hive.metastore.uris="${METASTORE_URIS}" \
+    --conf spark.sql.server.port="${SPARK_SQL_SERVER_PORT:-10000}" \
+    --conf spark.driver.memory="${SPARK_DRIVER_MEMORY:-32g}" \
+    --conf spark.executor.memory="${SPARK_EXECUTOR_MEMORY:-64g}" \
+    --conf spark.executor.cores="${SPARK_EXECUTOR_CORES:-8}" \
+    --conf spark.kubernetes.container.image="${IMAGE}" \
+    --conf spark.dynamicAllocation.enabled=true \
+    --conf spark.dynamicAllocation.minExecutors=1 \
+    --conf spark.dynamicAllocation.maxExecutors=5 \
+    --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.spark-local-dir-1.options.sizeLimit=50Gi \
+    --conf spark.sql.catalogImplementation=hive \
+    --conf spark.sql.hive.thriftServer.async=true

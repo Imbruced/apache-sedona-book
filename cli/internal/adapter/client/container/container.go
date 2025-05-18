@@ -61,8 +61,6 @@ func (c *Container) RunScript(ctx context.Context, containerID string, command [
 			return err
 		}
 
-		println(inspectResp.ExitCode)
-
 		if inspectResp.Running {
 			time.Sleep(1 * time.Second)
 			continue

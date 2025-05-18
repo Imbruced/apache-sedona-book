@@ -32,6 +32,8 @@ type ContainerRunRequest struct {
 	HealthCheck        HealthCheck
 	PostInitCommand    []string
 	NetworkID          string
+	ShowInBrowser      bool
+	BrowserOpenPath    string
 }
 
 type CreateContainerResponse struct {
