@@ -1,0 +1,43 @@
+version: 2
+
+sources:
+  - name: air_quality
+    schema: analytics
+    tables:
+      - name: observations_raw
+      - name: stations_raw
+      - name: borders
+
+models:
+  - name: stations
+    columns:
+      - name: geom
+        data_tests:
+          - within_boundary:
+              boundary: "POLYGON ((-180 -90, -180 90, 180 90, 180 -90, -180 -90))"
+          - is_point
+          - not_null
+      - name: country
+        data_tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              value_set: [
+                "Poland", "Germany", "France", "Belgium", "Switzerland",
+                "Luxembourg", "Netherlands", "Austria", "Czechia", "Denmark"
+              ]
+  - name: observations
+    columns:
+      - name: sampling_id
+        description: "The primary key for this table"
+        data_tests:
+          - unique
+          - not_null
+
+  - name: germany_neighbors
+    columns:
+      - name: country
+        data_tests:
+          - unique
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              value_set: [ "FR", "BE", "CH", "LU", "NL", "DE", "AT", "CZ", "DK", "PL", "DE" ]

@@ -1,5 +1,5 @@
 data:
-  copy: false
+  copy: true
 env:
   - name: "AWS_ACCESS_KEY_ID"
     value: ${AWS_ACCESS_KEY_ID}
@@ -7,3 +7,8 @@ env:
     value: ${AWS_SECRET_ACCESS_KEY}
   - name: "SEDONA_SOURCE_BUCKET"
     value: ptokaj-sedona-book
+  - name: "AWS_ENDPOINT_URL"
+    value: http://localhost:9000
+  - name: "SEDONA_COPY_MINIO"
+    value: "true"
+
