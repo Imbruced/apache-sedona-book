@@ -115,7 +115,6 @@ func (c *Client) provision(ctx context.Context) *cobra.Command {
 		}
 
 		cmd.Println("\n 🚀 Containers started successfully.")
-
 		if startContainersResponse.OpenUrl != nil {
 			browser.Open(*startContainersResponse.OpenUrl)
 		}

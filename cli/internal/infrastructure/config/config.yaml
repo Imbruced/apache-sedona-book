@@ -10,5 +10,5 @@ env:
   - name: "AWS_ENDPOINT_URL"
     value: http://localhost:9000
   - name: "SEDONA_COPY_MINIO"
-    value: "true"
+    value: "false"
 
