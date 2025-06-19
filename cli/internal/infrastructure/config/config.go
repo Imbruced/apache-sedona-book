@@ -49,6 +49,7 @@ type ImageDependency struct {
 	Volumes         []string
 	PostInitCommand []string `yaml:"post-init-command"`
 	Data            []string
+	BrowserPath     string `yaml:"browser-path"`
 }
 type ChapterStructure struct {
 	Title    string

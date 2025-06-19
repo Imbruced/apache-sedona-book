@@ -23,11 +23,12 @@ images:
       retries: 5
     ports:
       - "8888:8888"
-
   sedona:
     name: apache/sedona:1.7.1
     container-name: sedona-jupyter
     mount-path: /opt/workspace
+    show-in-browser: true
+    browser-open-path: http://localhost:8888/lab/tree
     ports:
       - "4040:4040"
       - "7077:7077"
@@ -35,6 +36,22 @@ images:
       - "8888:8888"
     health-check:
       test: ["CMD-SHELL", "curl -f http://localhost:8888/ || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  sedona-ai:
+    name: sedona-ai
+    container-name: sedona-ai
+    mount-path: /home/ubuntu/sedona-ai
+    show-in-browser: true
+    browser-open-path: http://localhost:8888/lab/tree
+    ports:
+      - "4040:4040"
+      - "7077:7077"
+      - "8080:8080"
+      - "8888:8888"
+    health-check:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8888/ || exit 1" ]
       interval: 5s
       timeout: 5s
       retries: 5
