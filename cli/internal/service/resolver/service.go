@@ -74,7 +74,7 @@ func (s *Service) Resolve(ctx context.Context, request *entity.ResolveRequest) (
 			},
 			PostInitCommand: image.PostInitCommand,
 			ShowInBrowser:   imageLocation.ShowInBrowser,
-			BrowserOpenPath: imageLocation.BrowserOpenPath,
+			BrowserOpenPath: fmt.Sprintf("%s/%s", imageLocation.BrowserOpenPath, image.BrowserPath),
 		})
 	}
 

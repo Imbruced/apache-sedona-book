@@ -1,7 +1,7 @@
 title: Geospatial Data Science And Machine Learning
-id: chapter5
+id: chapter7
 sections:
-  - title: Geospatial Clustering With Apache Sedona
+  - title: Geospatial Clustering With Apache Sedona (DBScan)
     id: geospatial-clustering-with-apache-sedona
     images:
       - image: sedona
@@ -9,7 +9,8 @@ sections:
           - chapter7/ClusteringWithApacheSedona.ipynb
           - chapter7/images
           - source_data/density_points
-  - title: Outlier Detection
+        browser-path: chapter7/ClusteringWithApacheSedona.ipynb
+  - title: Outlier Detection (Local Outlier Factor (LOF))
     id: outlier-detection
     images:
       - image: sedona
@@ -17,3 +18,72 @@ sections:
           - chapter7/OutlierDetection.ipynb
           - chapter7/images
           - source_data/density_points
+  - title: Hot Spot analysis (Local Getis-Ord Gi(*))
+    id: hot-spot-analysis
+    images:
+      - image: sedona
+        volumes:
+          - chapter7/HotSpotAnalysis.ipynb
+          - chapter7/images
+        browser-path: chapter7/HotSpotAnalysis.ipynb
+      - image: minio
+        post-init-command:
+          - /bin/bash
+          - /app/sources/scripts/copy_minio.sh
+        data:
+          - hot_spot
+        scripts:
+          - copy_minio.sh
+  - title: AutoCorrelation (MoranI)
+    id: autocorrelation
+    images:
+      - image: sedona
+        volumes:
+          - chapter7/AutoCorrelation.ipynb
+          - chapter7/images
+        browser-path: chapter7/AutoCorrelation.ipynb
+      - image: minio
+        post-init-command:
+          - /bin/bash
+          - /app/sources/scripts/copy_minio.sh
+        scripts:
+          - copy_minio.sh
+  - title: Classification, Segmentation, and Object Detection from Raster
+    id: classification-segmentation-and-object-detection-from-raster
+    images:
+      - image: sedona-ai
+        volumes:
+          - chapter7/RasterSegmentation.ipynb
+          - chapter7/images
+          - chapter7/sql.py
+        browser-path: chapter7/RasterSegmentation.ipynb
+      - image: minio
+        post-init-command:
+          - /bin/bash
+          - /app/sources/scripts/copy_minio.sh
+        scripts:
+          - copy_minio.sh
+  - title: Create Geospatial Machine Learning models with MLLib
+    id: create-geospatial-machine-learning-models-with-mllib
+    images:
+      - image: sedona
+        volumes:
+          - chapter7/MLLib.ipynb
+          - chapter7/images
+        browser-path: chapter7/MLLib.ipynb
+      - image: minio
+        post-init-command:
+          - /bin/bash
+          - /app/sources/scripts/copy_minio.sh
+        data:
+          - paris_places
+        scripts:
+          - copy_minio.sh
+  - title: Analysing the accidents in Germany
+    id: analysing-the-accidents-in-germany
+    images:
+      - image: sedona
+        volumes:
+          - chapter7/AccidentAnalysis.ipynb
+          - chapter7/images
+        browser-path: chapter7/AccidentAnalysis.ipynb
