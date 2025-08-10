@@ -1,0 +1,65 @@
+version: '3'
+
+services:
+  spark-master:
+    build:
+      context: spark
+    container_name: spark-master
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    entrypoint: >
+      sh -c "
+          echo 'Waiting for Spark master to be ready...' &&
+          /opt/spark/sbin/start-master.sh
+          ls /opt/spark/logs | xargs -I {} sh -c 'echo \"Log file: {}\" && tail -f /opt/spark/logs/{}'
+      "
+  spark-worker-1:
+    build:
+      context: spark
+    container_name: spark-worker-1
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    depends_on:
+      - spark-master
+    ports:
+      - "8081:8081"
+    entrypoint: >
+        sh -c "
+            echo 'Waiting for Spark master to be ready...' &&
+            /opt/spark/sbin/start-worker.sh spark://spark-master:7077
+          
+            ls /opt/spark/logs | xargs -I {} sh -c 'echo \"Log file: {}\" && tail -f /opt/spark/logs/{}'
+        "
+  minio:
+    image: quay.io/minio/minio:latest
+    command: server /data --console-address ":9001"
+    container_name: sedona_minio_chapter_2
+    volumes:
+      - ./minio-data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: sedona
+      MINIO_ROOT_PASSWORD: sedona_password
+    healthcheck:
+      test: [ "CMD", "mc", "ready", "local" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  minio-init:
+    image: quay.io/minio/mc:latest
+    container_name: sedona_minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    volumes:
+      - ../data:/app/sources
+    entrypoint: >
+      sh -c "
+        mc alias set local http://minio:9000 sedona sedona_password &&
+        mc mb local/sedona || true &&
+        mc cp --recursive  /app/sources/points local/sedona/
+      "
