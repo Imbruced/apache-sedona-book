@@ -24,7 +24,7 @@ images:
     ports:
       - "8888:8888"
   sedona:
-    name: apache/sedona:1.7.1
+    name: sedona:1.7.2
     container-name: sedona-jupyter
     mount-path: /opt/workspace
     show-in-browser: true

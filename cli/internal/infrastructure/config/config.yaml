@@ -8,7 +8,8 @@ env:
   - name: "SEDONA_SOURCE_BUCKET"
     value: ptokaj-sedona-book
   - name: "AWS_ENDPOINT_URL"
-    value: http://localhost:9000
+    # for minio value: http://localhost:9000
+    value: https://s3.eu-west-1.amazonaws.com
   - name: "SEDONA_COPY_MINIO"
     value: "false"
 
