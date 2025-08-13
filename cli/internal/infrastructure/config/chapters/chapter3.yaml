@@ -9,3 +9,10 @@ sections:
         volumes:
           - chapter3/LoadingVectorDataFormats.ipynb
         browser-path: chapter3/LoadingVectorDataFormats.ipynb
+  - title: Introduction To Raster Data Formats (GeoTif)
+    id: introduction-to-raster-data-formats-geotif
+    images:
+      - image: sedona
+        volumes:
+          - chapter3/LoadingRasterData.ipynb
+        browser-path: chapter3/LoadingRasterData.ipynb
