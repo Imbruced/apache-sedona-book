@@ -28,3 +28,7 @@ sections:
           - /bin/bash
           - /app/migrate.sh
         browser-path: chapter3/postgis-init.sql
+      - image: mysql
+        post-init-command:
+          - /bin/bash
+          - /app/migrate.sh
