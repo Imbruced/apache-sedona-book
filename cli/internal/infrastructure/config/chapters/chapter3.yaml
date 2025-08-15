@@ -38,3 +38,10 @@ sections:
           - /bin/bash
           - ./create-connector.sh
       - image: kafka
+  - title: "Hands-On Use Case: NYC Taxi Data Analysis"
+    id: hands-on-use-case-nyc-taxi-data-analysis
+    images:
+      - image: sedona
+        volumes:
+          - chapter3/NewYorkTaxiAnalysis.ipynb
+        browser-path: chapter3/NewYorkTaxiAnalysis.ipynb
