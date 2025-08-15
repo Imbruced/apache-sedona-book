@@ -16,3 +16,15 @@ sections:
         volumes:
           - chapter3/LoadingRasterData.ipynb
         browser-path: chapter3/LoadingRasterData.ipynb
+  - title: Loading Data From Databases
+    id: loading-data-from-databases
+    images:
+      - image: sedona
+        volumes:
+          - chapter3/ReadingFromPostgreSQL.ipynb
+        browser-path: chapter3/ReadingFromPostgreSQL.ipynb
+      - image: postgis
+        post-init-command:
+          - /bin/bash
+          - /app/migrate.sh
+        browser-path: chapter3/postgis-init.sql
