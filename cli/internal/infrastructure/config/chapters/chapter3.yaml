@@ -33,3 +33,8 @@ sections:
           - /bin/bash
           - /app/migrate.sh
       - image: mongo
+      - image: debezium
+        post-init-command:
+          - /bin/bash
+          - ./create-connector.sh
+      - image: kafka
