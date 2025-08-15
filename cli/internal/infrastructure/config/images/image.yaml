@@ -1,4 +1,15 @@
 images:
+  mongo:
+    name: mongo-sedona:7.0.23
+    container-name: mongo
+    mount-path: /opt/workspace
+    ports:
+      - "27017:27017"
+    health-check:
+      test: [ "CMD-SHELL", "mongo --eval 'db.adminCommand(\"ping\")' || exit 1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   mysql:
     name: mysql-sedona:9.1.0
     container-name: mysql
