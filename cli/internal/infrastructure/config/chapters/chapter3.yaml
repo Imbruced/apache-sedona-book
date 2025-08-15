@@ -32,3 +32,4 @@ sections:
         post-init-command:
           - /bin/bash
           - /app/migrate.sh
+      - image: mongo
