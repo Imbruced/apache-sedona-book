@@ -1,4 +1,18 @@
 images:
+  mysql:
+    name: mysql-sedona:9.1.0
+    container-name: mysql
+    mount-path: /opt/workspace
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sedona
+    health-check:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u root --silent || exit 1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   postgis:
     name: postgis:17-3.4
     mount-path: /opt/workspace
