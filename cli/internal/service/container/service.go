@@ -14,7 +14,7 @@ import (
 const (
 	SedonaNetworkName   = "sedona"
 	SedonaLabelName     = "sedona"
-	HealthCheckTimeout  = 20 * time.Second
+	HealthCheckTimeout  = 120 * time.Second
 	HealthCheckTickTime = time.Second * 2
 )
 

@@ -1,7 +1,14 @@
 images:
   postgis:
-    name: postgis/postgis:17-3.5-alpine
-    command: ["postgres", "-c", "wal_level=logical"]
+    name: postgis:17-3.4
+    mount-path: /opt/workspace
+    ports:
+      - "5432:5432"
+    health-check:
+      test: [ "CMD-SHELL", "pg_isready -h localhost -p 5432 -U postgres || exit 1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   thriftserver:
     name: thriftserver:1.0
     show-in-browser: false

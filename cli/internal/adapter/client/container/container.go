@@ -275,5 +275,17 @@ func (c *Container) IsHealthy(ctx context.Context, containerID string) (bool, er
 		return false, err
 	}
 
+	if result.State == nil {
+		return false, fmt.Errorf("container state is nil for container ID: %s", containerID)
+	}
+
+	if result.State.Health == nil {
+		return false, fmt.Errorf("container state is nil for container ID: %s", containerID)
+	}
+
+	if result.State.Health.Status == "unhealthy" {
+		return false, fmt.Errorf("container %s is unhealthy", containerID)
+	}
+
 	return result.State.Health != nil && result.State.Health.Status == "healthy", nil
 }
