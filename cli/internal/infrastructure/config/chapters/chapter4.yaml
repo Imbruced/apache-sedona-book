@@ -1,0 +1,14 @@
+title: "Points, Lines, and Polygons: Vector Data Analysis With Spatial SQL"
+id: chapter4
+
+sections:
+  - title: "Vector Data Model and Spatial Relationship"
+    id: vector-data-model-and-spatial-relationship
+  - title: "Spatial Reference System and the Geography Model"
+    id: spatial-reference-system-and-the-geography-model
+  - title: "Spatial SQL and Vector Data Manipulation"
+    id: spatial-sql-and-vector-data-manipulation
+    images:
+      - image: sedona
+        volumes:
+          - chapter4/SpatialSQLAndVectorManipulation.ipynb

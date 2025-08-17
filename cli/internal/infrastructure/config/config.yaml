@@ -12,4 +12,6 @@ env:
     value: https://s3.eu-west-1.amazonaws.com
   - name: "SEDONA_COPY_MINIO"
     value: "false"
+  - name: AWS_REGION
+    value: eu-west-1
 
