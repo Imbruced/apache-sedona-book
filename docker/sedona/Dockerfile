@@ -14,7 +14,14 @@ RUN cp aws-java-sdk-bundle-1.12.262.jar /opt/spark/jars && \
     cp postgresql-42.7.4.jar /opt/spark/jars && \
     cp mysql-connector-j-9.4.0.jar /opt/spark/jars
 
-# add conifguration files
+RUN apt-get update && \
+    apt-get install -y curl unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install
+
 COPY s3-conf.conf ./
 COPY apply.sh ./
 
