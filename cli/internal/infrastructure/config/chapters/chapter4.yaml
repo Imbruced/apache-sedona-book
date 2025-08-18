@@ -12,3 +12,9 @@ sections:
       - image: sedona
         volumes:
           - chapter4/SpatialSQLAndVectorManipulation.ipynb
+  - title: "Spatial Queries"
+    id: spatial-queries
+    images:
+      - image: sedona
+        volumes:
+          - chapter4/SpatialQueries.ipynb
