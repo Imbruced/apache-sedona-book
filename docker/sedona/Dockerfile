@@ -22,6 +22,8 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv
     unzip awscliv2.zip && \
     ./aws/install
 
+RUN pip install rtree
+
 COPY s3-conf.conf ./
 COPY apply.sh ./
 
