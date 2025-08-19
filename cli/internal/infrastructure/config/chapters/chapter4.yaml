@@ -18,3 +18,11 @@ sections:
       - image: sedona
         volumes:
           - chapter4/SpatialQueries.ipynb
+
+  - title: "Hands-On Use Case: Real Estate Analysis"
+    id: hands-on-use-case-real-estate-analysis
+    images:
+      - image: sedona
+        volumes:
+          - chapter4/RealEstateAnalysis.ipynb
+        browser-path: chapter4/RealEstateAnalysis.ipynb
