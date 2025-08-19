@@ -1,4 +1,4 @@
-FROM apache/sedona:1.7.2
+FROM apache/sedona:latest
 
 RUN wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.262/aws-java-sdk-bundle-1.12.262.jar && \
     wget https://repo1.maven.org/maven2/org/apache/sedona/sedona-spark-shaded-3.5_2.12/1.7.2/sedona-spark-shaded-3.5_2.12-1.7.2.jar && \
@@ -22,7 +22,8 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv
     unzip awscliv2.zip && \
     ./aws/install
 
-RUN pip install rtree
+RUN pip install rtree pystac
+
 
 COPY s3-conf.conf ./
 COPY apply.sh ./
