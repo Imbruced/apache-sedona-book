@@ -50,6 +50,7 @@ type ImageDependency struct {
 	PostInitCommand []string `yaml:"post-init-command"`
 	Data            []string
 	BrowserPath     string `yaml:"browser-path"`
+	OpenTerminal    bool   `yaml:"open-terminal"`
 }
 type ChapterStructure struct {
 	Title    string

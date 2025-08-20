@@ -34,6 +34,7 @@ type ContainerRunRequest struct {
 	NetworkID          string
 	ShowInBrowser      bool
 	BrowserOpenPath    string
+	OpenTerminal       bool
 }
 
 type CreateContainerResponse struct {
@@ -59,5 +60,6 @@ type Network struct {
 }
 
 type StartContainerResponse struct {
-	OpenUrl *string
+	OpenUrl      *string
+	OpenTerminal func() error
 }
