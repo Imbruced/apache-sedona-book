@@ -77,9 +77,10 @@ images:
       - "4040:4040"
       - "7077:7077"
       - "8080:8080"
+      - "10001:10001"
   sedonadbt:
     name: sedonadbt:1.0
-    show-in-browser: true
+    show-in-browser: false
     browser-open-path: http://localhost:8888/lab/tree/geospatialdbt/TransformingYourGeospatialDataWithDBT.ipynb
     container-name: sedonadbt
     mount-path: /opt/workspace
