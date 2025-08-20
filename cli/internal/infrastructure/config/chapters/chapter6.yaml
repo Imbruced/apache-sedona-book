@@ -23,4 +23,5 @@ sections:
         volumes:
           - chapter6/images
           - chapter6/geospatialdbt
+        open-terminal: true
       - image: thriftserver

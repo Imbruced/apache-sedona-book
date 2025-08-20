@@ -6,6 +6,8 @@ import (
 	"context"
 	"errors"
 	"github.com/docker/docker/api/types/container"
+	"os"
+	"os/exec"
 	"strings"
 	"sync"
 	"time"
@@ -108,6 +110,8 @@ func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreReq
 
 	var url *string
 
+	imageToConnect := ""
+
 	for _, image := range images {
 		go func() {
 			defer wg.Done()
@@ -133,6 +137,10 @@ func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreReq
 				return
 			}
 
+			if image.OpenTerminal {
+				imageToConnect = containerInfo.ID
+			}
+
 			if len(image.PostInitCommand) == 0 {
 				return
 			}
@@ -146,6 +154,22 @@ func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreReq
 	}
 
 	wg.Wait()
+
+	if imageToConnect != "" {
+		cmd := exec.Command("docker", "exec", "-it", imageToConnect, "/bin/bash")
+
+		// Attach current terminal’s stdin/stdout/stderr
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+
+		return &entity.StartContainerResponse{
+			OpenUrl: nil,
+			OpenTerminal: func() error {
+				return cmd.Run()
+			},
+		}, nil
+	}
 
 	return &entity.StartContainerResponse{
 		OpenUrl: url,

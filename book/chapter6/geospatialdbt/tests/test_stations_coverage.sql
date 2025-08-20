@@ -36,18 +36,18 @@ FROM grid_with_measurement_percentage
     )
     ), filtering AS (
 SELECT (
-    DE > 0.5 AND
-    FR > 0.45 AND
-    BE > 0.5 AND
-    CH > 0.3 AND
-    LU > 0.35 AND
-    NL > 0.55 AND
-    AT > 0.50 AND
-    CZ > 0.55 AND
-    PL > 0.60
+    DE > 0.19 AND
+    FR > 0.12 AND
+    BE > 0.22 AND
+    CH > 0.05 AND
+    LU > 0.16 AND
+    NL > 0.19 AND
+    AT > 0.21 AND
+    CZ > 0.2 AND
+    PL > 0.14
     ) AS meet_criteria
 FROM pivot
     )
 SELECT *
-FROM grid_with_measurement_percentage
--- where NOT meet_criteria;
+FROM filtering
+where NOT meet_criteria;
