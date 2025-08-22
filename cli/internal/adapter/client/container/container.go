@@ -168,7 +168,7 @@ func (c *Container) Run(ctx context.Context, request *entity.ContainerRunRequest
 	},
 		&container.HostConfig{
 			PortBindings: portMap,
-			Mounts:       createNewMounts(request.MountPathHost, request.MountPathContainer, request.MountFiles),
+			Mounts:       createMounts(request.MountPathHost, request.MountFiles),
 		},
 		&network.NetworkingConfig{
 			EndpointsConfig: map[string]*network.EndpointSettings{
@@ -191,6 +191,23 @@ func (c *Container) Run(ctx context.Context, request *entity.ContainerRunRequest
 	return &entity.CreateContainerResponse{
 		ID: resp.ID,
 	}, nil
+}
+
+func createMounts(hostRoot string, mountsInput []string) []mount.Mount {
+	mounts := make([]mount.Mount, 0)
+
+	for _, m := range mountsInput {
+		source := strings.Split(m, ":")[0]
+		target := strings.Split(m, ":")[1]
+
+		mounts = append(mounts, mount.Mount{
+			Type:   mount.TypeBind,
+			Source: fmt.Sprintf("%s/%s", hostRoot, source),
+			Target: target,
+		})
+	}
+
+	return mounts
 }
 
 func createNewMounts(mountHostRoot string, mountContainerRoot string, mountFiles []string) []mount.Mount {
@@ -281,10 +298,6 @@ func (c *Container) IsHealthy(ctx context.Context, containerID string) (bool, er
 
 	if result.State.Health == nil {
 		return false, fmt.Errorf("container state is nil for container ID: %s", containerID)
-	}
-
-	if result.State.Health.Status == "unhealthy" {
-		return false, fmt.Errorf("container %s is unhealthy", containerID)
 	}
 
 	return result.State.Health != nil && result.State.Health.Status == "healthy", nil

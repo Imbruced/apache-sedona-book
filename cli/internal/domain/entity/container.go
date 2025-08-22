@@ -35,6 +35,11 @@ type ContainerRunRequest struct {
 	ShowInBrowser      bool
 	BrowserOpenPath    string
 	OpenTerminal       bool
+	OpenWebUI          *OpenWebUIConfig
+}
+
+type OpenWebUIConfig struct {
+	Path string
 }
 
 type CreateContainerResponse struct {

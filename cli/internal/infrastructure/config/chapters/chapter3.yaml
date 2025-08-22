@@ -6,28 +6,30 @@ sections:
     id: loading-vector-data-formats
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/LoadingVectorDataFormats.ipynb
         volumes:
-          - chapter3/LoadingVectorDataFormats.ipynb
-        browser-path: chapter3/LoadingVectorDataFormats.ipynb
+          - chapter3/LoadingVectorDataFormats.ipynb:/opt/workspace/LoadingVectorDataFormats.ipynb
   - title: Introduction To Raster Data Formats (GeoTif)
     id: introduction-to-raster-data-formats-geotif
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/LoadingRasterData.ipynb
         volumes:
-          - chapter3/LoadingRasterData.ipynb
-        browser-path: chapter3/LoadingRasterData.ipynb
+          - chapter3/LoadingRasterData.ipynb:/opt/workspace/LoadingRasterData.ipynb
   - title: Loading Data From Databases
     id: loading-data-from-databases
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/ReadingFromPostgreSQL.ipynb
         volumes:
-          - chapter3/ReadingFromPostgreSQL.ipynb
-        browser-path: chapter3/ReadingFromPostgreSQL.ipynb
+          - chapter3/ReadingFromPostgreSQL.ipynb:/opt/workspace/ReadingFromPostgreSQL.ipynb
       - image: postgis
         post-init-command:
           - /bin/bash
           - /app/migrate.sh
-        browser-path: chapter3/postgis-init.sql
       - image: mysql
         post-init-command:
           - /bin/bash
@@ -42,6 +44,7 @@ sections:
     id: hands-on-use-case-nyc-taxi-data-analysis
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/NewYorkTaxiAnalysis.ipynb
         volumes:
-          - chapter3/NewYorkTaxiAnalysis.ipynb
-        browser-path: chapter3/NewYorkTaxiAnalysis.ipynb
+          - chapter3/NewYorkTaxiAnalysis.ipynb:/opt/workspace/NewYorkTaxiAnalysis.ipynb
