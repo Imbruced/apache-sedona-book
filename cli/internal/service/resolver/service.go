@@ -38,9 +38,6 @@ func (s *Service) Resolve(ctx context.Context, request *entity.ResolveRequest) (
 
 	for _, image := range aggImages {
 		imageLocation := cfg.Images.Images[image.Image]
-		if strings.HasPrefix(imageLocation.Name, "quay.io/minio") && !request.LoadData {
-			continue
-		}
 
 		exposedPorts := make(map[string]string, len(imageLocation.Ports))
 		for _, port := range imageLocation.Ports {
@@ -76,6 +73,9 @@ func (s *Service) Resolve(ctx context.Context, request *entity.ResolveRequest) (
 			ShowInBrowser:   imageLocation.ShowInBrowser,
 			BrowserOpenPath: fmt.Sprintf("%s/%s", imageLocation.BrowserOpenPath, image.BrowserPath),
 			OpenTerminal:    image.OpenTerminal,
+			OpenWebUI: &entity.OpenWebUIConfig{
+				Path: image.OpenWebUI.Path,
+			},
 		})
 	}
 
@@ -109,11 +109,7 @@ func (s *Service) aggregateImages(loadData bool, images []config.ImageDependency
 			currentElement = image
 		}
 
-		currentElement.Volumes = getUniqueElements(append(
-			currentElement.Volumes, s.resolveVolumes(loadData, image)...,
-		))
 		currentElement.PostInitCommand = getUniqueElements(append(currentElement.PostInitCommand, image.PostInitCommand...))
-		currentElement.Scripts = getUniqueElements(append(currentElement.Scripts, image.Scripts...))
 
 		seen[image.Image] = currentElement
 	}
@@ -130,16 +126,6 @@ func (s *Service) resolveVolumes(loadData bool, deps config.ImageDependency) []s
 
 	for _, volume := range deps.Volumes {
 		volumes = append(volumes, volume)
-	}
-
-	if loadData {
-		for _, data := range deps.Data {
-			volumes = append(volumes, fmt.Sprintf("%s/%s", dataDir, data))
-		}
-
-		for _, script := range deps.Scripts {
-			volumes = append(volumes, fmt.Sprintf("%s/%s", scriptDir, script))
-		}
 	}
 
 	return volumes

@@ -4,24 +4,43 @@ sections:
   - title: Manipulating Geospatial Vector Data
     id: manipulating-geospatial-vector-data
     images:
+      - image: sedona
+        volumes:
+          - chapter6/ManipulatingGeospatialVectorData.ipynb:/opt/workspace/ManipulatingGeospatialVectorData.ipynb
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/ManipulatingGeospatialVectorData.ipynb
       - image: minio
         post-init-command:
           - /bin/bash
-          - /app/sources/scripts/copy_minio.sh
-        data:
-          - transportation_barcelona
-        scripts:
-          - copy_minio.sh
-      - image: sedona
+          - /app/scripts/copy_minio.sh
         volumes:
-          - chapter6/ManipulatingGeospatialVectorData.ipynb
-          - chapter6/images
+          - scripts/copy_minio.sh:/app/scripts/copy_minio.sh
+          - source_data/transportation_barcelona:/app/sources/transportation
+  - title: "Scheduling your geospatial code"
+    id: scheduling-your-geospatial-code
+    images:
+      - image: airflow
+        volumes:
+          - chapter6/dags/:/opt/airflow/dags/
+        post-init-command:
+          - /bin/bash
+          - /opt/airflow/init.sh
+        open-webui:
+          path: http://localhost:8080
+      - image: minio
+        volumes:
+          - source_data/transportation:/app/sources/transportation
+          - scripts/copy_minio.sh:/app/scripts/copy_minio.sh
+        post-init-command:
+          - /bin/bash
+          - /app/scripts/copy_minio.sh
   - title: Transforming your Geospatial Data with dbt
     id: transforming-your-geospatial-data-with-dbt
     images:
       - image: sedonadbt
         volumes:
-          - chapter6/images
-          - chapter6/geospatialdbt
+          - chapter6/images:/opt/workspace/images
+          - chapter6/geospatialdbt:/opt/workspace
         open-terminal: true
       - image: thriftserver
+

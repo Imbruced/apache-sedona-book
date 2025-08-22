@@ -116,10 +116,8 @@ func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreReq
 		go func() {
 			defer wg.Done()
 			image.NetworkID = networkResponse.ID
-			if image.ShowInBrowser {
-				notebookName := findNotebook(image.MountFiles)
-				rawURL := "http://localhost:8888/lab/tree/" + notebookName
-				url = &rawURL
+			if image.OpenWebUI != nil {
+				url = &image.OpenWebUI.Path
 			}
 
 			containerInfo, err := s.client.Run(ctx, image)

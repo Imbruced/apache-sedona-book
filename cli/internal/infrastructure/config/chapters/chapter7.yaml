@@ -5,85 +5,66 @@ sections:
     id: geospatial-clustering-with-apache-sedona
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/ClusteringWithApacheSedona.ipynb
         volumes:
-          - chapter7/ClusteringWithApacheSedona.ipynb
-          - chapter7/images
-          - source_data/density_points
-        browser-path: chapter7/ClusteringWithApacheSedona.ipynb
+          - chapter7/ClusteringWithApacheSedona.ipynb:/opt/workspace/ClusteringWithApacheSedona.ipynb
+          - source_data/density_points:/opt/workspace/source_data/density_points
   - title: Outlier Detection (Local Outlier Factor (LOF))
     id: outlier-detection
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/OutlierDetection.ipynb
         volumes:
-          - chapter7/OutlierDetection.ipynb
-          - chapter7/images
-          - source_data/density_points
+          - chapter7/OutlierDetection.ipynb:/opt/workspace/OutlierDetection.ipynb
+          - source_data/density_points:/opt/workspace/source_data/density_points
   - title: Hot Spot analysis (Local Getis-Ord Gi(*))
     id: hot-spot-analysis
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/HotSpotAnalysis.ipynb
         volumes:
-          - chapter7/HotSpotAnalysis.ipynb
-          - chapter7/images
-        browser-path: chapter7/HotSpotAnalysis.ipynb
+          - chapter7/HotSpotAnalysis.ipynb:/opt/workspace/HotSpotAnalysis.ipynb
       - image: minio
         post-init-command:
           - /bin/bash
-          - /app/sources/scripts/copy_minio.sh
-        data:
-          - hot_spot
-        scripts:
-          - copy_minio.sh
+          - /app/scripts/copy_minio.sh
+        volumes:
+          - scripts/copy_minio.sh:/app/scripts/copy_minio.sh
+          - source_data/hot_spot:/app/sources/hot_spot
   - title: AutoCorrelation (MoranI)
     id: autocorrelation
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/AutoCorrelation.ipynb
         volumes:
-          - chapter7/AutoCorrelation.ipynb
-          - chapter7/images
+          - chapter7/AutoCorrelation.ipynb:/opt/workspace/AutoCorrelation.ipynb
         browser-path: chapter7/AutoCorrelation.ipynb
-      - image: minio
-        post-init-command:
-          - /bin/bash
-          - /app/sources/scripts/copy_minio.sh
-        scripts:
-          - copy_minio.sh
   - title: Classification, Segmentation, and Object Detection from Raster
     id: classification-segmentation-and-object-detection-from-raster
     images:
       - image: sedona-ai
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/RasterSegmentation.ipynb
         volumes:
-          - chapter7/RasterSegmentation.ipynb
-          - chapter7/images
-          - chapter7/sql.py
-        browser-path: chapter7/RasterSegmentation.ipynb
-      - image: minio
-        post-init-command:
-          - /bin/bash
-          - /app/sources/scripts/copy_minio.sh
-        scripts:
-          - copy_minio.sh
+          - chapter7/sql.py:/home/ubuntu/sedona-ai/sql.py
+          - chapter7/RasterSegmentation.ipynb:/home/ubuntu/sedona-ai/RasterSegmentation.ipynb
   - title: Create Geospatial Machine Learning models with MLLib
     id: create-geospatial-machine-learning-models-with-mllib
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/MLLib.ipynb
         volumes:
-          - chapter7/MLLib.ipynb
-          - chapter7/images
-        browser-path: chapter7/MLLib.ipynb
-      - image: minio
-        post-init-command:
-          - /bin/bash
-          - /app/sources/scripts/copy_minio.sh
-        data:
-          - paris_places
-        scripts:
-          - copy_minio.sh
+          - chapter7/MLLib.ipynb:/opt/workspace/MLLib.ipynb
   - title: Analysing the accidents in Germany
     id: analysing-the-accidents-in-germany
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/AccidentAnalysis.ipynb
         volumes:
-          - chapter7/AccidentAnalysis.ipynb
-          - chapter7/images
-        browser-path: chapter7/AccidentAnalysis.ipynb
+          - chapter7/AccidentAnalysis.ipynb:/opt/workspace/AccidentAnalysis.ipynb
