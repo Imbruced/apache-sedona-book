@@ -5,81 +5,48 @@ sections:
     id: the-raster-data-model
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/RasterModel.ipynb
         volumes:
-          - chapter5/RasterModel.ipynb
-          - chapter5/images
+          - chapter5/RasterModel.ipynb:/opt/workspace/RasterModel.ipynb
   - title: Raster SQL and Raster Data Manipulation
     id: raster-sql-and-raster-data-manipulation
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/Raster SQL and Raster Data Manipulation.ipynb
         volumes:
-          - chapter5/Raster SQL and Raster Data Manipulation.ipynb
-          - chapter5/images
+          - chapter5/Raster SQL and Raster Data Manipulation.ipynb:/opt/workspace/Raster SQL and Raster Data Manipulation.ipynb
   - title: Zonal Statistics
     id: zonal-statistics
     images:
-        - image: minio
-          post-init-command:
-            - /bin/bash
-            - /app/sources/scripts/copy_minio.sh
-          data:
-            - ny_rail_road_and_aviation_noise
-            - ny_redfin_sold_offers
-          scripts:
-            - copy_minio.sh
-        - image: sedona
-          volumes:
-            - chapter5/Zonal Statistics.ipynb
-            - chapter5/images
+      - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/Zonal Statistics.ipynb
+        volumes:
+          - chapter5/images:/opt/workspace/images
+          - chapter5/Zonal Statistics.ipynb:/opt/workspace/Zonal Statistics.ipynb
   - title: Map Algebra
     id: map-algebra
     images:
-      - image: minio
-        post-init-command:
-          - /bin/bash
-          - /app/sources/scripts/copy_minio.sh
-        data:
-          - swir_b11_tiles
-          - nir_b08_tiles
-        scripts:
-          - copy_minio.sh
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/MapAlgebra.ipynb
         volumes:
-          - chapter5/MapAlgebra.ipynb
-          - chapter5/images
+          - chapter5/MapAlgebra.ipynb:/opt/workspace/MapAlgebra.ipynb
   - title: Joining raster data with vector data
     id: joining-raster-data-with-vector-data
     images:
-      - image: minio
-        scripts:
-          - copy_minio.sh
-        data:
-          - world_population_raster
-          - fdi_data
-        post-init-command:
-          - /bin/bash
-          - /app/sources/scripts/copy_minio.sh
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/RasterJoin.ipynb
         volumes:
-          - chapter5/RasterJoin.ipynb
-          - chapter5/images
+          - chapter5/RasterJoin.ipynb:/opt/workspace/RasterJoin.ipynb
   - title: Hands-On Use Case\:\ Insurance Risk Modeling
     id: hands-on-use-case-insurance-risk-modeling
     images:
-      - image: minio
-        post-init-command:
-          - /bin/bash
-          - /app/sources/scripts/copy_minio.sh
-        data:
-          - world_population_raster
-          - buildings
-          - fire_risk
-          - flood
-          - infrastructure
-          - places
-        scripts:
-          - copy_minio.sh
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/Use Case Insurance Risk Modeling.ipynb
         volumes:
-          - chapter5/Use Case Insurance Risk Modeling.ipynb
-          - chapter5/images
+          - chapter5/Use Case Insurance Risk Modeling.ipynb:/opt/workspace/Use Case Insurance Risk Modeling.ipynb

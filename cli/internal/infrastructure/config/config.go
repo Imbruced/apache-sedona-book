@@ -49,9 +49,15 @@ type ImageDependency struct {
 	Volumes         []string
 	PostInitCommand []string `yaml:"post-init-command"`
 	Data            []string
-	BrowserPath     string `yaml:"browser-path"`
-	OpenTerminal    bool   `yaml:"open-terminal"`
+	BrowserPath     string          `yaml:"browser-path"`
+	OpenTerminal    bool            `yaml:"open-terminal"`
+	OpenWebUI       OpenWebUIConfig `yaml:"open-webui"`
 }
+
+type OpenWebUIConfig struct {
+	Path string `yaml:"path"`
+}
+
 type ChapterStructure struct {
 	Title    string
 	ID       string

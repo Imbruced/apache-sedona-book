@@ -10,19 +10,23 @@ sections:
     id: spatial-sql-and-vector-data-manipulation
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/SpatialSQLAndVectorManipulation.ipynb
         volumes:
-          - chapter4/SpatialSQLAndVectorManipulation.ipynb
+          - chapter4/SpatialSQLAndVectorManipulation.ipynb:/opt/workspace/SpatialSQLAndVectorManipulation.ipynb
   - title: "Spatial Queries"
     id: spatial-queries
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/SpatialQueries.ipynb
         volumes:
-          - chapter4/SpatialQueries.ipynb
-
+          - chapter4/SpatialQueries.ipynb:/opt/workspace/SpatialQueries.ipynb
   - title: "Hands-On Use Case: Real Estate Analysis"
     id: hands-on-use-case-real-estate-analysis
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/RealEstateAnalysis.ipynb
         volumes:
-          - chapter4/RealEstateAnalysis.ipynb
-        browser-path: chapter4/RealEstateAnalysis.ipynb
+          - chapter4/RealEstateAnalysis.ipynb:/opt/workspace/RealEstateAnalysis.ipynb

@@ -1,4 +1,17 @@
 images:
+  airflow:
+    name: sedona-airflow:1.0
+    ports:
+      - "8080:8080"
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__CORE__EXECUTOR: 'SequentialExecutor'
+    mount-path: /opt/airflow
+    health-check:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/ || exit 1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   debezium:
     name: debezium-sedona:3.2.1
     container-name: debezium-sedona
@@ -81,7 +94,6 @@ images:
   sedonadbt:
     name: sedonadbt:1.0
     show-in-browser: false
-    browser-open-path: http://localhost:8888/lab/tree/geospatialdbt/TransformingYourGeospatialDataWithDBT.ipynb
     container-name: sedonadbt
     mount-path: /opt/workspace
     health-check:
@@ -96,7 +108,6 @@ images:
     container-name: sedona-jupyter
     mount-path: /opt/workspace
     show-in-browser: true
-    browser-open-path: http://localhost:8888/lab/tree
     ports:
       - "4040:4040"
       - "7077:7077"
