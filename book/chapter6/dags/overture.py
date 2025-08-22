@@ -1,17 +1,7 @@
 from airflow import DAG
 import pendulum
-from airflow.operators.bash import BashOperator
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from sensor import GeoParquetDataReleaseSensor
-
-packages = [
-    # 'org.apache.hadoop:hadoop-aws:3.3.4',
-    # 'org.apache.hadoop:hadoop-client-api:3.3.4',
-    # 'org.apache.hadoop:hadoop-common:3.3.4',
-    # 'org.apache.sedona:sedona-spark-3.5_2.12:1.7.0',
-    # 'org.datasyslab:geotools-wrapper:1.7.0-28.5',
-    # 'uk.co.gresearch.spark:spark-extension_2.12:2.11.0-3.4',
-]
 
 with DAG(
         dag_id="sync-overture-transportation-data",
@@ -40,7 +30,6 @@ with DAG(
         num_executors=2,
         name="spark_job",
         verbose=True,
-        # packages=",".join(packages),
         conf={
             "spark.hadoop.fs.s3a.aws.credentials.provider": "org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider",
             "spark.hadoop.fs.s3a.access.key": "sedona",
