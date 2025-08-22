@@ -2,5 +2,3 @@ pyspark==3.5.4
 apache-airflow-providers-apache-spark
 pendulum
 apache-sedona
-
-# spark-submit --conf spark.hadoop.fs.s3a.aws.credentials.provider=org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider --conf spark.hadoop.fs.s3a.access.key=sedona --conf spark.hadoop.fs.s3a.secret.key=****** --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000 --conf spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem --conf spark.hadoop.fs.s3a.path.style.access=true --conf spark.hadoop.fs.s3a.connection.ssl.enabled=false --packages org.apache.hadoop:hadoop-aws:3.3.4,org.apache.hadoop:hadoop-client-api:3.3.4,org.apache.hadoop:hadoop-common:3.3.4,org.apache.sedona:sedona-spark-3.5_2.12:1.7.0,org.datasyslab:geotools-wrapper:1.7.0-28.5,uk.co.gresearch.spark:spark-extension_2.12:2.11.0-3.4 --num-executors 2 --executor-cores 1 --executor-memory 2g --driver-memory 1g --name spark_job --verbose /opt/airflow/dags/app.py 2025-01-22
