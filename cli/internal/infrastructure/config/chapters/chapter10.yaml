@@ -1,0 +1,10 @@
+title: Optimizing Apache Sedona Applications
+id: chapter10
+sections:
+  - title: Optimizing the Apache Sedona Application
+    id: optimizing-the-apache-sedona-application
+    images:
+      - image: sedona
+        volumes:
+          - chapter10/OptimizingApacheSedonaProgram.ipynb
+        browser-path: chapter10/OptimizingApacheSedonaProgram.ipynb
