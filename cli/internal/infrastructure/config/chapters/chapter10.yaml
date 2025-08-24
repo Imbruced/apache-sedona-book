@@ -8,3 +8,10 @@ sections:
         volumes:
           - chapter10/OptimizingApacheSedonaProgram.ipynb
         browser-path: chapter10/OptimizingApacheSedonaProgram.ipynb
+  - title: Spatial Partitioning
+    id: spatial-partitioning
+    images:
+      - image: sedona
+        volumes:
+          - chapter10/SpatialPartitioning.ipynb
+        browser-path: chapter10/SpatialPartitioning.ipynb
