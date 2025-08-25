@@ -5,20 +5,32 @@ sections:
     id: optimizing-the-apache-sedona-application
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/OptimizingApacheSedonaProgram.ipynb
         volumes:
-          - chapter10/OptimizingApacheSedonaProgram.ipynb
-        browser-path: chapter10/OptimizingApacheSedonaProgram.ipynb
+          - chapter10/OptimizingApacheSedonaProgram.ipynb:/opt/workspace/OptimizingApacheSedonaProgram.ipynb
   - title: Spatial Partitioning
     id: spatial-partitioning
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/SpatialPartitioning.ipynb
         volumes:
-          - chapter10/SpatialPartitioning.ipynb
-        browser-path: chapter10/SpatialPartitioning.ipynb
+          - chapter10/SpatialPartitioning.ipynb:/opt/workspace/SpatialPartitioning.ipynb
   - title: Spatial Join
     id: spatial-join
     images:
       - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/OptimizingSpatialJoin.ipynb
         volumes:
-          - chapter10/OptimizingSpatialJoin.ipynb
-        browser-path: chapter10/OptimizingSpatialJoin.ipynb
+          - chapter10/OptimizingSpatialJoin.ipynb:/opt/workspace/OptimizingSpatialJoin.ipynb
+  - title: GeoArrow conversion
+    id: geoarrow-conversion
+    images:
+      - image: sedona
+        open-webui:
+          path: http://localhost:8888/terminals/1
+        volumes:
+          - chapter10/geoarrow_benchmark.py:/opt/workspace/geoarrow_benchmark.py
+          - chapter10/geoarrow_benchmark_to_sedona.py:/opt/workspace/geoarrow_benchmark_to_sedona.py
