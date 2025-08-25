@@ -15,3 +15,10 @@ sections:
         volumes:
           - chapter10/SpatialPartitioning.ipynb
         browser-path: chapter10/SpatialPartitioning.ipynb
+  - title: Spatial Join
+    id: spatial-join
+    images:
+      - image: sedona
+        volumes:
+          - chapter10/OptimizingSpatialJoin.ipynb
+        browser-path: chapter10/OptimizingSpatialJoin.ipynb
