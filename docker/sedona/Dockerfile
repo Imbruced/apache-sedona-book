@@ -24,6 +24,8 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv
 
 RUN pip install rtree pystac
 
+RUN wget https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.5_2.12/1.9.2/iceberg-spark-runtime-3.5_2.12-1.9.2.jar
+RUN cp iceberg-spark-runtime-3.5_2.12-1.9.2.jar /opt/spark/jars
 
 COPY s3-conf.conf ./
 COPY apply.sh ./
