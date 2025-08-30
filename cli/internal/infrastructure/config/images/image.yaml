@@ -1,4 +1,12 @@
 images:
+  postgres:
+    name: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: sedona
+      POSTGRES_PASSWORD: sedona
+      POSTGRES_DB: sedona
   airflow:
     name: sedona-airflow:1.0
     ports:

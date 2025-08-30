@@ -1,0 +1,23 @@
+title: Building A Geospatial Data Lakehouse With Apache Parquet And Apache Iceberg
+id: chapter8
+sections:
+  - title: Geospatial Data Lakehouse Deep Dive
+    id: geospatial-data-lakehouse-deep-dive
+    images:
+      - image: airflow
+        volumes:
+          - chapter8/dags/:/opt/airflow/dags/
+        post-init-command:
+          - /bin/bash
+          - /opt/airflow/init.sh
+        open-webui:
+          path: http://localhost:8080
+      - image: minio
+        volumes:
+          - scripts/copy_minio.sh:/app/scripts/copy_minio.sh
+          - chapter8/minio:/data
+        post-init-command:
+          - /bin/bash
+          - /app/scripts/copy_minio.sh
+      - image: postgres
+
