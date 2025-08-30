@@ -41,7 +41,8 @@ def add_number_of_buildings(df: sql.DataFrame) -> sql.DataFrame:
         .transform(normalize_column("res_buildings", 0.3)) \
         .select("h3", "res_buildings")
 
-    return df.join(number_of_buildings_normalized, "h3", how="left")
+    return df.join(number_of_buildings_normalized, "h3", how="left").\
+                withColumn("res_buildings", f.coalesce(f.col("res_buildings"), f.lit(0)))
 
 
 def normalize_speed_limit(df: sql.DataFrame) -> sql.DataFrame:
@@ -76,16 +77,13 @@ def enrich_with_flood_map(df: sql.DataFrame) -> sql.DataFrame:
 
     normalized_pivot = pivot \
         .transform(normalize_column("ten_flood_point_cnt", 0.4)) \
-        .transform(normalize_column("twenty_flood_point_cnt", 0.3)) \
-        .transform(normalize_column("thirty_flood_point_cnt", 0.2)) \
-        .transform(normalize_column("fourty_flood_point_cnt", 0.31)) \
         .transform(normalize_column("fifty_flood_point_cnt", 0.09)) \
-        .transform(normalize_column("seventyfive_flood_point_cnt", 0.08)) \
-        .transform(normalize_column("one_hundred_flood_point_cnt", 0.07)) \
-        .transform(normalize_column("two_hundred_flood_point_cnt", 0.06)) \
-        .transform(normalize_column("five_hundred_flood_point_cnt", 0.05))
+        .transform(normalize_column("one_hundred_flood_point_cnt", 0.07))
 
-    return df.join(normalized_pivot, "h3", how="left")
+    return df.join(normalized_pivot, "h3", how="left").\
+        withColumn("ten_flood_point_cnt", f.coalesce(f.col("ten_flood_point_cnt"), f.lit(0))) \
+        .withColumn("fifty_flood_point_cnt", f.coalesce(f.col("fifty_flood_point_cnt"), f.lit(0))) \
+        .withColumn("one_hundred_flood_point_cnt", f.coalesce(f.col("one_hundred_flood_point_cnt"), f.lit(0)))
 
 
 (processing_date, input_database, output_database) = sys.argv[1:4]
@@ -107,15 +105,10 @@ sedona.table(f"{CATALOG_NAME}.{input_database}.nl_transportation_hex_bins") \
         (f.col("res_buildings") +
          f.col("speed_limit") +
          f.col("ten_flood_point_cnt") +
-         f.col("twenty_flood_point_cnt") +
-         f.col("thirty_flood_point_cnt") +
-         f.col("fourty_flood_point_cnt") +
          f.col("fifty_flood_point_cnt") +
-         f.col("seventyfive_flood_point_cnt") +
-         f.col("one_hundred_flood_point_cnt") +
-         f.col("two_hundred_flood_point_cnt") +
-         f.col("five_hundred_flood_point_cnt")).alias("risk_score")
-    ).createOrReplaceTempView("risk_score")
+         f.col("one_hundred_flood_point_cnt")).alias("risk_score"))\
+    .transform(normalize_column("risk_score", 1.0)) \
+    .createOrReplaceTempView("risk_score")
 
 sedona.sql(
     f"""

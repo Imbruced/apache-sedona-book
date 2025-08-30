@@ -20,4 +20,8 @@ sections:
           - /bin/bash
           - /app/scripts/copy_minio.sh
       - image: postgres
-
+      - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/GeospatialDateLakehouse.ipynb
+        volumes:
+          - chapter8/GeospatialDateLakehouse.ipynb:/opt/workspace/GeospatialDateLakehouse.ipynb
