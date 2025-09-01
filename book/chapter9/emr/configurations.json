@@ -1,0 +1,11 @@
+[
+  {
+    "Classification":"spark-defaults",
+    "Properties":{
+      "spark.yarn.dist.jars": "/jars/sedona-spark-shaded-<SPARK_VERSION>_<SCALA_VERSION>-<SEDONA_VERSION>.jar,/jars/geotools-wrapper-<SEDONA_VERSION>-<GEOTOOLS_VERSION>.jar",
+      "spark.serializer": "org.apache.spark.serializer.KryoSerializer",
+      "spark.kryo.registrator": "org.apache.sedona.core.serde.SedonaKryoRegistrator",
+      "spark.sql.extensions": "org.apache.sedona.viz.sql.SedonaVizExtensions,org.apache.sedona.sql.SedonaSqlExtensions"
+    }
+  }
+]
