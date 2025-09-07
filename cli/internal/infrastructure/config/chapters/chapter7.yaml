@@ -60,6 +60,9 @@ sections:
           path: http://localhost:8888/lab/workspaces/auto-R/tree/MLLib.ipynb
         volumes:
           - chapter7/MLLib.ipynb:/opt/workspace/MLLib.ipynb
+      - image: ors
+        volumes:
+          - chapter7/ors/graphs:/home/ors/graphs
   - title: Analysing the accidents in Germany
     id: analysing-the-accidents-in-germany
     images:

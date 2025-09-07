@@ -164,3 +164,16 @@ images:
       timeout: 5s
       retries: 5
     mount-path: /app/sources
+  ors:
+    name: ors:v8.0.0
+    ports:
+      - "8085:8082"
+    environment:
+      REBUILD_GRAPHS: False
+      ors.engine.source_file: /home/ors/files/ile-de-france-latest.osm.pbf
+    health-check:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8082/ors/v2/health || exit 1" ]
+      start_period: 1m
+      interval: 10s
+      timeout: 2s
+      retries: 3
