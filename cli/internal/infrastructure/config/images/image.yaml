@@ -37,6 +37,12 @@ images:
       interval: 5s
       timeout: 5s
       retries: 5
+  kafka-ui:
+    name: provectuslabs/kafka-ui
+    environment:
+      DYNAMIC_CONFIG_ENABLED: true
+    ports:
+      - "8089:8080"
   kafka:
     name: apache/kafka:4.0.0
     container-name: kafka
