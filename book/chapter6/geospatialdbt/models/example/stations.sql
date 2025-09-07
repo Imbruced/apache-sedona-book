@@ -20,10 +20,10 @@ WITH neighor_stations AS (
         'Germany'
     )
 )
-select
-    distinct lower(concat(iso_code, "/", `sampling_id`)) AS sampling_id,
+SELECT
+    DISTINCT lower(concat(iso_code, "/", `sampling_id`)) AS sampling_id,
     country,
     ST_POINT(lon, lat) AS geom,
     air_pollutant AS pollutant
-from neighor_stations as s
+FROM neighor_stations as s
 WHERE ST_POINT(lon, lat) IS NOT NULL

@@ -16,6 +16,15 @@ sections:
         volumes:
           - scripts/copy_minio.sh:/app/scripts/copy_minio.sh
           - source_data/transportation_barcelona:/app/sources/transportation
+  - title: Raster Data Tools
+    id: raster-data-tools
+    images:
+      - image: sedona
+        volumes:
+          - chapter6/RasterDataTools.ipynb:/opt/workspace/RasterDataTools.ipynb
+          - chapter6/ID73_S20_W70_RP10_depth.tif:/opt/workspace/ID73_S20_W70_RP10_depth.tif
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/RasterDataTools.ipynb
   - title: "Scheduling your geospatial code"
     id: scheduling-your-geospatial-code
     images:
