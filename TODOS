@@ -1,0 +1,2 @@
+- automatically remove network if already exist (sedona clear)
+- pull/build missing images when running the infra for the chapter

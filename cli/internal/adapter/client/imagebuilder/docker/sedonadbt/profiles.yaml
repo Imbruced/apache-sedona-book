@@ -1,0 +1,29 @@
+spark_testing:
+  target: local
+  outputs:
+    local:
+      type: spark
+      method: thrift
+      host: thriftserver
+      port: 10001
+      user: dbt
+      schema: analytics
+      connect_retries: 5
+      connect_timeout: 60
+      retry_all: false
+      server_side_parameters:
+        "spark.driver.memory": "4g"
+        "spark.executor.cores": "4"
+        "spark.executor.memory": "8g"
+        "spark.dynamicAllocation.enabled": "true"
+dbt_iceberg_sample:
+  outputs:
+    dev:
+      host: spark-thrift
+      method: thrift
+      port: 10000
+      schema: test_schema
+      threads: 10
+      type: spark
+      auth: NOSASL
+  target: dev

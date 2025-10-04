@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
+	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
@@ -30,6 +31,12 @@ var (
 
 type Container struct {
 	cli *client.Client
+}
+
+func NewClient(cli *client.Client) *Container {
+	return &Container{
+		cli: cli,
+	}
 }
 
 func (c *Container) RunScript(ctx context.Context, containerID string, command []string) error {
@@ -83,10 +90,8 @@ func (c *Container) getFilterArgs() filters.Args {
 	return filterArgs
 }
 
-func (c *Container) GetNetworkID(ctx context.Context) (*entity.Network, error) {
-	networks, err := c.cli.NetworkList(ctx, network.ListOptions{
-		Filters: c.getFilterArgs(),
-	})
+func (c *Container) GetNetworkID(ctx context.Context, networkName string) (*entity.Network, error) {
+	networks, err := c.cli.NetworkList(ctx, network.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -95,15 +100,15 @@ func (c *Container) GetNetworkID(ctx context.Context) (*entity.Network, error) {
 		return nil, domainerrors.ErrNetworkNotFound
 	}
 
-	if len(networks) > 1 {
-		return nil, fmt.Errorf("multiple networks found")
+	for _, n := range networks {
+		if n.Name == networkName {
+			return &entity.Network{
+				ID: n.ID,
+			}, nil
+		}
 	}
 
-	networkInfo := networks[0]
-
-	return &entity.Network{
-		ID: networkInfo.ID,
-	}, nil
+	return nil, domainerrors.ErrNetworkNotFound
 }
 
 func (c *Container) RemoveNetwork(ctx context.Context, networkID string) error {
@@ -116,7 +121,7 @@ func (c *Container) RemoveNetwork(ctx context.Context, networkID string) error {
 }
 
 func (c *Container) CreateNetwork(ctx context.Context, request *entity.CreateNetworkRequest) (*entity.CreateNetworkResponse, error) {
-	n, err := c.cli.NetworkCreate(ctx, "sedona", network.CreateOptions{
+	n, err := c.cli.NetworkCreate(ctx, request.Name, network.CreateOptions{
 		Driver:     "bridge",
 		Internal:   false,
 		Attachable: true,
@@ -210,20 +215,6 @@ func createMounts(hostRoot string, mountsInput []string) []mount.Mount {
 	return mounts
 }
 
-func createNewMounts(mountHostRoot string, mountContainerRoot string, mountFiles []string) []mount.Mount {
-	mounts := make([]mount.Mount, 0)
-
-	for _, mountFile := range mountFiles {
-		mounts = append(mounts, mount.Mount{
-			Type:   mount.TypeBind,
-			Source: mountHostRoot + "/" + mountFile,
-			Target: mountContainerRoot + "/" + mountFile,
-		})
-	}
-
-	return mounts
-}
-
 func (c *Container) ReadLogs(ctx context.Context, containerID string) (string, error) {
 	result, err := c.cli.ContainerLogs(ctx, containerID, container.LogsOptions{
 		ShowStdout: true,
@@ -292,13 +283,54 @@ func (c *Container) IsHealthy(ctx context.Context, containerID string) (bool, er
 		return false, err
 	}
 
-	if result.State == nil {
-		return false, fmt.Errorf("container state is nil for container ID: %s", containerID)
+	state := result.State
+
+	if state == nil {
+		return false, nil
 	}
 
-	if result.State.Health == nil {
-		return false, fmt.Errorf("container state is nil for container ID: %s", containerID)
+	if state.Health == nil {
+		return false, nil
 	}
 
 	return result.State.Health != nil && result.State.Health.Status == "healthy", nil
+}
+
+func (c *Container) PullImage(ctx context.Context, img string) error {
+	out, err := c.cli.ImagePull(ctx, img, image.PullOptions{})
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	line := make([]byte, 20)
+
+	for {
+		rs, err := out.Read(line)
+		if rs == 0 {
+			break
+		}
+
+		if err != nil {
+			break
+		}
+
+	}
+
+	return nil
+}
+
+func (c *Container) VerifyImageExists(ctx context.Context, img string) (bool, error) {
+	images, err := c.cli.ImageList(ctx, image.ListOptions{
+		Filters: filters.NewArgs(filters.Arg("reference", img)),
+	})
+	if err != nil {
+		return false, err
+	}
+
+	return len(images) > 0, nil
+}
+
+type ImagePullStatus struct {
+	Status string `json:"status"`
 }

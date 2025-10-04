@@ -1,0 +1,4 @@
+pyspark==3.5.4
+apache-airflow-providers-apache-spark
+pendulum
+apache-sedona

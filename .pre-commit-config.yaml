@@ -1,0 +1,9 @@
+repos:
+  -   repo: local
+      hooks:
+        -   id: go-tests
+            name: tests
+            entry: /bin/bash ./run-tests.sh
+            pass_filenames: false
+            types: [go]
+            language: system

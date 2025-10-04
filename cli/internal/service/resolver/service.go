@@ -21,7 +21,7 @@ func NewService() *Service {
 	return &Service{}
 }
 
-func (s *Service) Resolve(ctx context.Context, request *entity.ResolveRequest) ([]*entity.ContainerRunRequest, error) {
+func (s *Service) Resolve(ctx context.Context, request *entity.ResolveRequest) (entity.ContainerRunRequests, error) {
 	cfg, err := config.NewConfig(request.Chapter)
 	if err != nil {
 		return nil, err
