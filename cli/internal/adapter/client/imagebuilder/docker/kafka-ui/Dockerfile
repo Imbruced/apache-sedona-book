@@ -1,0 +1,1 @@
+FROM kafka-ui-local

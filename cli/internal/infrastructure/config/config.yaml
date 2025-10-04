@@ -14,4 +14,3 @@ env:
     value: "false"
   - name: AWS_REGION
     value: eu-west-1
-

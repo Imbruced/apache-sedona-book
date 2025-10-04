@@ -4,25 +4,27 @@ import (
 	"cli/internal/adapter/cli/animation"
 	"cli/internal/adapter/cli/browser"
 	"cli/internal/adapter/cli/transform"
+	"cli/internal/domain/dto"
 	"cli/internal/domain/entity"
 	"context"
 	"github.com/spf13/cobra"
+	"sync"
 	"time"
 )
 
-type ContainerService interface {
-	ListContainers(ctx context.Context) ([]*entity.ContainerMetadata, error)
+type ProvisionService interface {
+	Provision(ctx context.Context, request *dto.ProvisionRequest) (*dto.StartContainersRequest, error)
 	Clear(ctx context.Context) error
-	StartContainers(ctx context.Context, request *entity.RunPreRequisiteRequest) (*entity.StartContainerResponse, error)
+	ListContainers(ctx context.Context) ([]*entity.ContainerMetadata, error)
 }
 
 type Client struct {
-	containerService ContainerService
+	provisionService ProvisionService
 }
 
-func NewClient(containerService ContainerService) *Client {
+func NewClient(provisionService ProvisionService) *Client {
 	return &Client{
-		containerService: containerService,
+		provisionService: provisionService,
 	}
 }
 
@@ -44,7 +46,7 @@ func (c *Client) clear(ctx context.Context) *cobra.Command {
 		go animation.BroomSweepMultipleAnimation(ctx)
 		time.Sleep(time.Millisecond * 500)
 
-		err := c.containerService.Clear(ctx)
+		err := c.provisionService.Clear(ctx)
 		if err != nil {
 			cmd.PrintErrf("Error clearing containers: %v\n", err)
 			return
@@ -63,7 +65,7 @@ func (c *Client) listContainers(ctx context.Context) *cobra.Command {
 	}
 
 	command.Run = func(cmd *cobra.Command, args []string) {
-		containers, err := c.containerService.ListContainers(ctx)
+		containers, err := c.provisionService.ListContainers(ctx)
 		if err != nil {
 			cmd.PrintErrf("Error listing containers: %v\n", err)
 		}
@@ -93,7 +95,6 @@ func (c *Client) provision(ctx context.Context) *cobra.Command {
 	ctxWithCancel, cancel := context.WithCancel(ctx)
 
 	command.Run = func(cmd *cobra.Command, args []string) {
-		go animation.Provisioning(ctxWithCancel)
 		var chapterDomain entity.Chapter
 
 		if chapter != "" {
@@ -106,18 +107,46 @@ func (c *Client) provision(ctx context.Context) *cobra.Command {
 			chapterDomain = chapterDomainRaw
 		}
 
-		startContainersResponse, err := c.containerService.StartContainers(ctx, &entity.RunPreRequisiteRequest{
+		startContainersResponse, err := c.provisionService.Provision(ctx, &dto.ProvisionRequest{
 			Chapter:    chapterDomain,
 			SubChapter: entity.SubChapter(subChapter),
-			CopyData:   copyData,
 		})
 		if err != nil {
 			cmd.PrintErrf("Error starting containers: %v\n", err)
 			return
 		}
 
+		go func() {
+			for {
+				select {
+				case <-ctxWithCancel.Done():
+					return
+				case givenErr := <-startContainersResponse.Errors:
+					if givenErr != nil {
+						cmd.PrintErrf("Error starting containers: %v\n", err)
+						cancel()
+						return
+					}
+				case <-time.Tick(time.Millisecond * 1000):
+				}
+			}
+		}()
+
+		go animation.BuildingImages(ctxWithCancel, startContainersResponse)
+
+		c.waitImagesToBeReady(ctx, startContainersResponse)
+		cancel()
+
+		ctxWithCancel, cancel = context.WithCancel(ctx)
+
+		go animation.Provisioning(ctxWithCancel, time.Millisecond*500)
+
+		c.waitContainersToBeReady(ctx, startContainersResponse)
+		cancel()
+
 		cmd.Println("\n 🚀 Containers started successfully.")
 		if startContainersResponse.OpenUrl != nil {
+			print("\n 🌐 Opening browser...")
 			browser.Open(*startContainersResponse.OpenUrl)
 		}
 
@@ -134,4 +163,74 @@ func (c *Client) provision(ctx context.Context) *cobra.Command {
 	}
 
 	return command
+}
+
+func (c *Client) waitImagesToBeReady(ctx context.Context, request *dto.StartContainersRequest) {
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	getReadyContainers := func(in *dto.StartContainersRequest) int {
+		readyCount := 0
+		for _, ready := range in.BuildingImages {
+			if ready {
+				readyCount++
+			}
+		}
+
+		return readyCount
+	}
+
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-time.Tick(time.Millisecond * 1000):
+				if getReadyContainers(request) == len(request.BuildingImages) {
+					wg.Done()
+				}
+			}
+
+		}
+	}()
+
+	wg.Wait()
+}
+
+func (c *Client) waitContainersToBeReady(ctx context.Context, request *dto.StartContainersRequest) {
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	getReadyContainers := func(in *dto.StartContainersRequest) int {
+		readyCount := 0
+		for _, ready := range in.StartingImages {
+			if ready {
+				readyCount++
+			}
+		}
+
+		return readyCount
+	}
+
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-time.Tick(time.Millisecond * 1000):
+				if getReadyContainers(request) == len(request.StartingImages) {
+					wg.Done()
+				}
+			}
+
+		}
+	}()
+
+	wg.Wait()
 }

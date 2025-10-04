@@ -25,7 +25,7 @@ func TestContainer_ListContainers(t *testing.T) {
 	containerClient := NewContainer(cli)
 	containers, err := containerClient.ListContainers(ctx)
 	assert.NoError(t, err)
-	println(len(containers))
+	assert.NotNil(t, containers)
 }
 
 func Test(t *testing.T) {
@@ -104,4 +104,31 @@ func TestContainer_RemoveNetwork(t *testing.T) {
 
 	err = containerClient.RemoveNetwork(ctx, "test_network")
 	assert.Error(t, err)
+}
+
+func TestContainer_PullImage(t *testing.T) {
+	tests := map[string]struct {
+		image string
+	}{
+		"successful: pull nginx image": {
+			image: "nginx:latest",
+		},
+		"successful: pull alpine image": {
+			image: "alpine:latest",
+		},
+	}
+
+	for testName, testCase := range tests {
+		t.Run(testName, func(t *testing.T) {
+			cli, err := client.NewClientWithOpts(
+				client.FromEnv,
+				client.WithAPIVersionNegotiation(),
+			)
+			assert.NoError(t, err)
+
+			containerClient := NewContainer(cli)
+			err = containerClient.PullImage(ctx, testCase.image)
+			assert.NoError(t, err)
+		})
+	}
 }
