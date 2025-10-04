@@ -3,8 +3,12 @@ package main
 import (
 	"cli/internal/adapter/cli"
 	containerClient "cli/internal/adapter/client/container"
-	"cli/internal/service/container"
+	"cli/internal/adapter/client/imagebuilder"
+	"cli/internal/service/builder"
+	"cli/internal/service/network"
+	"cli/internal/service/provision"
 	"cli/internal/service/resolver"
+	"cli/internal/service/run"
 	"github.com/docker/docker/client"
 	"github.com/spf13/cobra"
 )
@@ -15,11 +19,21 @@ func main() {
 
 	}
 
-	containerClient := containerClient.NewContainer(dockerClient)
+	cc := containerClient.NewContainer(dockerClient)
 	resolverService := resolver.NewService()
+	imageClient := imagebuilder.NewClient(dockerClient)
 
-	containerService := container.NewService(containerClient, resolverService)
-	cliClient := cli.NewClient(containerService)
+	builderService := builder.NewService().WithImageClient(imageClient)
+	networkService := network.NewService(cc)
+	containerService := run.NewService(cc)
+
+	provisioningService := provision.NewService().
+		WithBuilderService(builderService).
+		WithNetworkService(networkService).
+		WithResolver(resolverService).
+		WithContainerService(containerService)
+
+	cliClient := cli.NewClient(provisioningService)
 	commands := cliClient.GetCommands()
 
 	var rootCmd = &cobra.Command{Use: "sedona"}

@@ -60,5 +60,3 @@ sections:
           - chapter6/VectorGeospatialVisualization.ipynb:/opt/workspace/VectorGeospatialVisualization.ipynb
         open-webui:
           path: http://localhost:8888/lab/workspaces/auto-R/tree/VectorGeospatialVisualization.ipynb
-
-

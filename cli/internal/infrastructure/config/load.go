@@ -2,12 +2,16 @@ package config
 
 import (
 	"cli/internal/domain/entity"
+	"embed"
 	"fmt"
 	"github.com/goccy/go-yaml"
 	"os"
 	"path/filepath"
 	"runtime"
 )
+
+//go:embed chapters/*.yaml
+var configChapters embed.FS
 
 func NewConfig(chapter entity.Chapter) (*Config, error) {
 	cfg := Config{}
@@ -24,8 +28,7 @@ func NewConfig(chapter entity.Chapter) (*Config, error) {
 	)
 
 	chapterConfigPath := fmt.Sprintf(
-		"%s/chapters/%s.yaml",
-		rootPath,
+		"chapters/%s.yaml",
 		resolveChapter(chapter),
 	)
 
@@ -34,7 +37,7 @@ func NewConfig(chapter entity.Chapter) (*Config, error) {
 		rootPath,
 	)
 
-	chapterConfigContent, err := os.ReadFile(chapterConfigPath)
+	chapterConfigContent, err := configChapters.ReadFile(chapterConfigPath)
 	if err != nil {
 		return nil, err
 	}

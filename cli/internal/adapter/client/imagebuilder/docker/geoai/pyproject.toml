@@ -1,0 +1,14 @@
+[project]
+name = "sedona-ai"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "apache-sedona>=1.7.2",
+    "geoai-py>=0.6.0",
+    "geopandas>=1.1.0",
+    "notebook>=7.4.3",
+    "shapely>=2.1.1",
+    "pyspark==3.5.2",
+]
