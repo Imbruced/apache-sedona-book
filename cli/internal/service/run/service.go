@@ -52,7 +52,6 @@ func (s *Service) RunContainers(ctx context.Context, request *dto.StartContainer
 
 			containerID, err := s.startContainer(ctx, image)
 			if err != nil {
-				println("Error starting container:", err.Error())
 				return
 			}
 

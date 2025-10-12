@@ -14,6 +14,7 @@ const (
 	Chapter8
 	Chapter9
 	Chapter10
+	Chapter11
 )
 
 const (

@@ -137,6 +137,18 @@ images:
       interval: 5s
       timeout: 5s
       retries: 5
+  sedonadb:
+    name: sedonadb:1.7.2
+    container-name: sedonadb-jupyter
+    mount-path: /opt/workspace
+    show-in-browser: true
+    ports:
+      - "8888:8888"
+    health-check:
+      test: ["CMD-SHELL", "curl -f http://localhost:8888/ || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   sedona-ai:
     name: sedona-ai:1.7.2
     container-name: sedona-ai
@@ -182,3 +194,15 @@ images:
       interval: 10s
       timeout: 2s
       retries: 3
+  prefect:
+    name: prefecthq/3.4.23-python3.11
+    container-name: prefect
+    ports:
+      - "4200:4200"
+    environment:
+      PREFECT_API_URL: http://localhost:4200/api
+    health-check:
+      test: [ "CMD-SHELL", "curl -f http://localhost:4200/ || exit 1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5

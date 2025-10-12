@@ -7,6 +7,6 @@ import (
 func Open(url string) {
 	err := exec.Command("open", "-a", "Google Chrome", url).Run()
 	if err != nil {
-		println(err.Error())
+		return
 	}
 }

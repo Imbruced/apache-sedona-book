@@ -1,0 +1,26 @@
+services:
+  sedona:
+    image: sedona
+    build:
+      context: "./cli/internal/adapter/client/imagebuilder/docker/sedona"
+    ports:
+      - "4040:4040"
+      - "7077:7077"
+      - "8081:8080"
+      - "8888:8888"
+    profiles:
+      - "chapter-3"
+    volumes:
+      - ./book/chapter3:/opt/workspace/chapter3
+  prefect:
+    image: prefect
+    build:
+      context: "./cli/internal/adapter/client/imagebuilder/docker/prefect"
+    container_name: prefect
+    profiles:
+      - "chapter-6"
+    ports:
+      - "4200:4200"
+    command: ["./entrypoint.sh"]
+    volumes:
+      - ./cli/internal/adapter/client/imagebuilder/docker/prefect/:/opt/prefect

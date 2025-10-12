@@ -49,3 +49,19 @@ func (s *StartContainersRequest) GetAllImages() []*entity.ImageReady {
 
 	return result
 }
+
+func (s *StartContainersRequest) GetAllContainers() []*entity.ImageReady {
+	result := make([]*entity.ImageReady, 0, len(s.StartingImages))
+	for image, ready := range s.StartingImages {
+		result = append(result, &entity.ImageReady{
+			Image: image,
+			Ready: ready,
+		})
+	}
+
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].Image < result[j].Image
+	})
+
+	return result
+}

@@ -1,0 +1,8 @@
+deployments:
+  - name: sedona-application
+    entrypoint: ./flows/sedona_flow.py:sedona_flow
+    work_pool:
+      name: sedona-pool
+    schedules:
+      - cron: "0 9 * * *"
+        timezone: "America/New_York"

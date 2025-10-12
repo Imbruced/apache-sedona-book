@@ -1,0 +1,19 @@
+title: Additional materials
+id: chapter11
+sections:
+  - title: Running SedonaDB
+    id: running-sedonadb
+    images:
+      - image: sedonadb
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/SedonaDBExamples.ipynb
+        volumes:
+          - chapter11/SedonaDBExamples.ipynb:/opt/workspace/SedonaDBExamples.ipynb
+  - title: Creating Geospatial AI Agents with Sedona
+    id: creating-geospatial-ai-agents-with-sedona
+    images:
+      - image: sedona
+        open-webui:
+          path: http://localhost:8888/lab/workspaces/auto-R/tree/SpatialPartitioning.ipynb
+        volumes:
+          - chapter10/SpatialPartitioning.ipynb:/opt/workspace/SpatialPartitioning.ipynb

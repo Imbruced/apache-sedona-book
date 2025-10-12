@@ -40,7 +40,6 @@ sections:
           - /bin/bash
           - ./create-connector.sh
       - image: kafka
-      - image: kafka-ui
   - title: "Hands-On Use Case: NYC Taxi Data Analysis"
     id: hands-on-use-case-nyc-taxi-data-analysis
     images:

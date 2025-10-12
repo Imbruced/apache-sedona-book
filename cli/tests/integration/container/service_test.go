@@ -44,6 +44,20 @@ func TestContainerService(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
 	})
+
+	startChapter(t, entity.Chapter11, entity.SubChapter1, func(request *dto.StartContainersRequest) {
+		assert.Equal(t, "http://localhost:8080", *request.OpenUrl)
+
+		resp, err := http.Get("http://localhost:8080")
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+	})
 }
 
 func startChapter(t *testing.T, chapter entity.Chapter, subChapter entity.SubChapter, verifyState func(request *dto.StartContainersRequest)) {

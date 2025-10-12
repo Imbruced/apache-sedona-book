@@ -122,7 +122,6 @@ func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreReq
 
 			containerInfo, err := s.client.Run(ctx, image)
 			if err != nil {
-				println("Error starting container:", err.Error())
 				return
 			}
 
@@ -145,7 +144,6 @@ func (s *Service) StartContainers(ctx context.Context, request *entity.RunPreReq
 
 			err = s.client.RunScript(ctx, containerInfo.ID, image.PostInitCommand)
 			if err != nil {
-				println("Error running script:", err.Error())
 				return
 			}
 		}()
@@ -195,14 +193,4 @@ func (s *Service) WaitUntilHealthy(ctx context.Context, containerID string) (boo
 			}
 		}
 	}
-}
-
-func findNotebook(mounts []string) string {
-	for _, mount := range mounts {
-		if strings.HasSuffix(mount, ".ipynb") {
-			return mount
-		}
-	}
-
-	return ""
 }
