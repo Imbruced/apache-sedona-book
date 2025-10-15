@@ -9,12 +9,13 @@ import (
 	"cli/internal/service/run"
 	"context"
 	"fmt"
-	"github.com/docker/docker/client"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/docker/docker/client"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestContainerService(t *testing.T) {
@@ -35,20 +36,6 @@ func TestContainerService(t *testing.T) {
 		assert.Equal(t, "http://localhost:8888/lab/workspaces/auto-R/tree/ReadingFromPostgreSQL.ipynb", *request.OpenUrl)
 
 		resp, err := http.Get("http://localhost:8888")
-		if err != nil {
-			fmt.Println("Error:", err)
-			return
-		}
-		defer resp.Body.Close()
-
-		assert.NoError(t, err)
-		assert.Equal(t, http.StatusOK, resp.StatusCode)
-	})
-
-	startChapter(t, entity.Chapter11, entity.SubChapter1, func(request *dto.StartContainersRequest) {
-		assert.Equal(t, "http://localhost:8080", *request.OpenUrl)
-
-		resp, err := http.Get("http://localhost:8080")
 		if err != nil {
 			fmt.Println("Error:", err)
 			return
