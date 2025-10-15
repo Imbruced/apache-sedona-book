@@ -7,7 +7,7 @@ requires-python = ">=3.11"
 dependencies = [
     "apache-airflow-providers-apache-spark>=5.3.2",
     "apache-airflow-providers-common-compat>=1.7.3",
-    "apache-sedona[kepler-map]==1.7.2",
+    "apache-sedona[db,kepler-map]==1.7.2",
     "esda>=2.7.1",
     "geoai-py>=0.6.0",
     "geopandas>=1.0.1",

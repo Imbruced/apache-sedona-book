@@ -9,12 +9,13 @@ import (
 	"cli/internal/service/run"
 	"context"
 	"fmt"
-	"github.com/docker/docker/client"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/docker/docker/client"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestContainerService(t *testing.T) {

@@ -10,6 +10,7 @@ sections:
           path: http://localhost:8888/lab/workspaces/auto-R/tree/SpatialRelationships.ipynb
         volumes:
           - chapter4/SpatialRelationships.ipynb:/opt/workspace/SpatialRelationships.ipynb
+          - chapter4/relate.py:/opt/workspace/relate.py
   - title: "Spatial Reference System and the Geography Model"
     id: spatial-reference-system-and-the-geography-model
   - title: "Spatial SQL and Vector Data Manipulation"

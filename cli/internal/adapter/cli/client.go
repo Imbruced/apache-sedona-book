@@ -112,7 +112,6 @@ func (c *Client) provision(ctx context.Context) *cobra.Command {
 			SubChapter: entity.SubChapter(subChapter),
 		})
 		if err != nil {
-			cmd.PrintErrf("Error starting containers: %v\n", err)
 			return
 		}
 
@@ -123,7 +122,6 @@ func (c *Client) provision(ctx context.Context) *cobra.Command {
 					return
 				case givenErr := <-startContainersResponse.Errors:
 					if givenErr != nil {
-						cmd.PrintErrf("Error starting containers: %v\n", err)
 						cancel()
 						return
 					}
@@ -139,7 +137,7 @@ func (c *Client) provision(ctx context.Context) *cobra.Command {
 
 		ctxWithCancel, cancel = context.WithCancel(ctx)
 
-		go animation.Provisioning(ctxWithCancel, time.Millisecond*500)
+		go animation.Provisioning(ctxWithCancel, startContainersResponse)
 
 		c.waitContainersToBeReady(ctx, startContainersResponse)
 		cancel()

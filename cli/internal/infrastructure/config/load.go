@@ -95,6 +95,8 @@ func resolveChapter(chapter entity.Chapter) string {
 		return "chapter9"
 	case entity.Chapter10:
 		return "chapter10"
+	case entity.Chapter11:
+		return "chapter11"
 	default:
 		return ""
 	}

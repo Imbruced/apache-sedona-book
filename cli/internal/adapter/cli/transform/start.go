@@ -24,6 +24,8 @@ func ChapterToDomain(chapter string) (entity.Chapter, error) {
 		return entity.Chapter9, nil
 	case "chapter10":
 		return entity.Chapter10, nil
+	case "chapter11":
+		return entity.Chapter11, nil
 	}
 
 	return entity.Chapter1, nil

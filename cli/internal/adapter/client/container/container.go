@@ -41,11 +41,7 @@ func NewClient(cli *client.Client) *Container {
 
 func (c *Container) RunScript(ctx context.Context, containerID string, command []string) error {
 	execID, err := c.cli.ContainerExecCreate(ctx, containerID, container.ExecOptions{
-		AttachStdin:  false,
-		AttachStdout: true,
-		AttachStderr: true,
-		Tty:          false,
-		Cmd:          command,
+		Cmd: command,
 	})
 	if err != nil {
 		return err
@@ -76,8 +72,6 @@ func (c *Container) RunScript(ctx context.Context, containerID string, command [
 		if inspectResp.ExitCode != 0 {
 			return fmt.Errorf("command exited with code %d", inspectResp.ExitCode)
 		}
-
-		println("Command executed successfully")
 
 		break
 	}
