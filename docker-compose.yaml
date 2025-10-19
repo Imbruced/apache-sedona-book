@@ -15,10 +15,15 @@ services:
     profiles:
       - "chapter-3"
       - "chapter-6-5"
+      - "chapter-6-1"
+      - "chapter-6-2"
     volumes:
       - ./book/chapter3:/opt/workspace/chapter3
       - ./book/chapter6/VectorGeospatialVisualization.ipynb:/opt/workspace/chapter6/VectorGeospatialVisualization.ipynb
       - ./book/chapter6/kepler_map_config.json:/opt/workspace/chapter6/kepler_map_config.json
+      - ./book/chapter6/ManipulatingGeospatialVectorData.ipynb:/opt/workspace/chapter6/ManipulatingGeospatialVectorData.ipynb
+      - ./book/chapter6/RasterDataTools.ipynb:/opt/workspace/chapter6/RasterDataTools.ipynb
+      - ./book/chapter6/ID73_S20_W70_RP10_depth.tif:/opt/workspace/chapter6/ID73_S20_W70_RP10_depth.tif
   prefect:
     image: prefect
     build:
