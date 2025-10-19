@@ -57,7 +57,7 @@ class GeoParquetDataReleaseSensor(BaseSensorOperator):
 
         if releases[-1] > date_formatted:
             self.log.info(f"Latest release is {releases[-1]}.")
-            raise AirflowSkipException("Skipping this task no release with that date and ")
+            raise AirflowSkipException("Skipping this task no release with that date")
 
         if (current_date - timedelta(days=1)).strftime('%Y-%m-%d') > date_formatted:
             self.log.info(f"Last release is in the past")

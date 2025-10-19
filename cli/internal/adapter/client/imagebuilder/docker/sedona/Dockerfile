@@ -1,4 +1,4 @@
-FROM apache/sedona:1.7.2
+FROM apache/sedona:1.8.0
 
 RUN wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.262/aws-java-sdk-bundle-1.12.262.jar && \
     wget https://repo1.maven.org/maven2/org/apache/sedona/sedona-spark-shaded-3.5_2.12/1.7.2/sedona-spark-shaded-3.5_2.12-1.7.2.jar && \
@@ -29,5 +29,10 @@ RUN cp iceberg-spark-runtime-3.5_2.12-1.9.2.jar /opt/spark/jars
 
 COPY s3-conf.conf ./
 COPY apply.sh ./
+
+RUN pip install pyspark==3.5.2
+RUN pip install contextily
+RUN pip install folium
+RUN pip install mapclassify
 
 CMD ["/bin/bash", "./apply.sh"]

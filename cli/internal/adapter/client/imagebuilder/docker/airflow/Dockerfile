@@ -36,7 +36,10 @@ RUN chmod +x init.sh
 
 RUN chmod 777 -R /home/airflow/.local/lib/python3.12/site-packages/pyspark/conf
 
+COPY entrypoint.sh entrypoint.sh
+RUN chmod +x entrypoint.sh
+ENV AIRFLOW__LOGGING__LOGGING_LEVEL=WARNING
+ENV PYTHONWARNINGS=ignore
 USER airflow
 
-ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint"]
-CMD ["standalone"]
+ENTRYPOINT ["./entrypoint.sh"]
