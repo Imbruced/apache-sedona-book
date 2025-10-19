@@ -24,3 +24,4 @@ To run the examples, you need to have the following installed on your machine:
 
 # Running examples using the docker compose
 ![](run-compose-chapter-6.mov)
+[run-compose-chapter-6.mov](run-compose-chapter-6.mov)
