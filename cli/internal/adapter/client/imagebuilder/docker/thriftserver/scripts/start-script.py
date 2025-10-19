@@ -1,21 +1,24 @@
 from pyspark.sql import SparkSession
 import time
-from sedona.register.geo_registrator import SedonaRegistrator
+import sedona.spark as s
 
-spark = SparkSession.builder \
-    .appName("Embedding Spark Thrift Server") \
-    .config("spark.sql.hive.thriftServer.singleSession", "True") \
-    .config("hive.server2.thrift.port", "10001") \
-    .config("javax.jdo.option.ConnectionURL",
-            "jdbc:derby:;databaseName=metastore_db2;create=true") \
-    .enableHiveSupport() \
-    .getOrCreate()
+config = (
+    s.SedonaContext.builder() \
+        .appName("Embedding Spark Thrift Server") \
+        .config("spark.sql.hive.thriftServer.singleSession", "True") \
+        .config("hive.server2.thrift.port", "10001") \
+        .config("javax.jdo.option.ConnectionURL",
+                "jdbc:derby:;databaseName=metastore_db2;create=true") \
+        .enableHiveSupport() \
+        .getOrCreate()
+)
 
-SedonaRegistrator.registerAll(spark)
-spark.sql("SELECT ST_GeomFromText('POINT(1 1)') AS geom").show(truncate=False)
+sedona = s.SedonaContext.create(config)
 
-spark.sql("CREATE SCHEMA IF NOT EXISTS ANALYTICS")
-spark.sql(
+sedona.sql("SELECT ST_GeomFromText('POINT(1 1)') AS geom").show(truncate=False)
+
+sedona.sql("CREATE SCHEMA IF NOT EXISTS ANALYTICS")
+sedona.sql(
 """
 CREATE EXTERNAL TABLE ANALYTICS.OBSERVATIONS_RAW(
     `Samplingpoint` STRING,
@@ -33,7 +36,7 @@ CREATE EXTERNAL TABLE ANALYTICS.OBSERVATIONS_RAW(
 ) USING PARQUET LOCATION '/opt/spark/spark-warehouse/raw/observations';
 """
 )
-spark.sql(
+sedona.sql(
     """
     CREATE EXTERNAL TABLE ANALYTICS.BORDERS(
         country STRING,
@@ -43,9 +46,9 @@ spark.sql(
 )
 
 
-sc = spark.sparkContext
+sc = sedona.sparkContext
 
 sc._gateway.jvm.org.apache.spark.sql.hive.thriftserver \
-    .HiveThriftServer2.startWithContext(spark._jsparkSession.sqlContext())
+    .HiveThriftServer2.startWithContext(sedona._jsparkSession.sqlContext())
 while True:
     time.sleep(5)

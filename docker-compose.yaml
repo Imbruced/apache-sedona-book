@@ -8,10 +8,22 @@ services:
       - "7077:7077"
       - "8081:8080"
       - "8888:8888"
+    environment:
+      SEDONA_SOURCE_BUCKET: ${SEDONA_SOURCE_BUCKET}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     profiles:
       - "chapter-3"
+      - "chapter-6-5"
+      - "chapter-6-1"
+      - "chapter-6-2"
     volumes:
       - ./book/chapter3:/opt/workspace/chapter3
+      - ./book/chapter6/VectorGeospatialVisualization.ipynb:/opt/workspace/chapter6/VectorGeospatialVisualization.ipynb
+      - ./book/chapter6/kepler_map_config.json:/opt/workspace/chapter6/kepler_map_config.json
+      - ./book/chapter6/ManipulatingGeospatialVectorData.ipynb:/opt/workspace/chapter6/ManipulatingGeospatialVectorData.ipynb
+      - ./book/chapter6/RasterDataTools.ipynb:/opt/workspace/chapter6/RasterDataTools.ipynb
+      - ./book/chapter6/ID73_S20_W70_RP10_depth.tif:/opt/workspace/chapter6/ID73_S20_W70_RP10_depth.tif
   prefect:
     image: prefect
     build:
@@ -24,3 +36,61 @@ services:
     command: ["./entrypoint.sh"]
     volumes:
       - ./cli/internal/adapter/client/imagebuilder/docker/prefect/:/opt/prefect
+  airflow:
+    image: airflow
+    build:
+      context: "./cli/internal/adapter/client/imagebuilder/docker/airflow"
+    container_name: airflow
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    profiles:
+      - "chapter-6-3"
+    ports:
+      - "8080:8080"
+    command: ["./entrypoint.sh"]
+    volumes:
+      - ./book/chapter6/dags/:/opt/airflow/dags/
+    restart: on-failure
+  minio:
+    image: minio
+    build:
+      context: "./cli/internal/adapter/client/imagebuilder/docker/minio"
+    environment:
+      MINIO_ROOT_USER: sedona
+      MINIO_ROOT_PASSWORD: sedona_password
+    container_name: minio
+    profiles:
+      - "chapter-6-3"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    entrypoint: ["./entrypoint.sh"]
+    volumes:
+      - ./book/source_data/transportation:/app/sources/transportation
+    restart: on-failure
+  thriftserver:
+    image: thriftserver
+    build:
+      context: "./cli/internal/adapter/client/imagebuilder/docker/thriftserver"
+    container_name: thriftserver
+    profiles:
+      - "chapter-6-4"
+    ports:
+      - "4040:4040"
+      - "7077:7077"
+      - "8081:8080"
+      - "10001:10001"
+    command: ["./entrypoint.sh"]
+    restart: on-failure
+  sedonadbt:
+    image: sedonadbt
+    build:
+      context: "./cli/internal/adapter/client/imagebuilder/docker/sedonadbt"
+    container_name: sedonadbt
+    profiles:
+      - "chapter-6-4"
+    restart: on-failure
+    volumes:
+      - ./book/chapter6/geospatialdbt:/opt/workspace
+
