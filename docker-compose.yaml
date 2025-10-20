@@ -17,6 +17,7 @@ services:
       - "chapter-6-5"
       - "chapter-6-1"
       - "chapter-6-2"
+      - "chapter-7-1"
     volumes:
       - ./book/chapter3:/opt/workspace/chapter3
       - ./book/chapter6/VectorGeospatialVisualization.ipynb:/opt/workspace/chapter6/VectorGeospatialVisualization.ipynb
@@ -24,6 +25,8 @@ services:
       - ./book/chapter6/ManipulatingGeospatialVectorData.ipynb:/opt/workspace/chapter6/ManipulatingGeospatialVectorData.ipynb
       - ./book/chapter6/RasterDataTools.ipynb:/opt/workspace/chapter6/RasterDataTools.ipynb
       - ./book/chapter6/ID73_S20_W70_RP10_depth.tif:/opt/workspace/chapter6/ID73_S20_W70_RP10_depth.tif
+      - ./book/chapter7/ClusteringWithApacheSedona.ipynb:/opt/workspace/chapter7/ClusteringWithApacheSedona.ipynb
+      - ./book/source_data/density_points:/opt/workspace/chapter7/source_data/density_points
   prefect:
     image: prefect
     build:
