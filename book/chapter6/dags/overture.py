@@ -1,7 +1,7 @@
 from airflow import DAG
 import pendulum
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
-from sensor import GeoParquetDataReleaseSensor
+from chapter6.sensor import GeoParquetDataReleaseSensor
 
 with DAG(
         dag_id="sync-overture-transportation-data",

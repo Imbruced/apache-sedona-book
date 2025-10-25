@@ -2,9 +2,11 @@ import sys
 
 import sedona.spark as s
 import pyspark.sql.functions as f
+import os
+
+bucket_name = os.environ.get("SEDONA_SOURCE_BUCKET", "sedona-book-bucket")
 
 CATALOG_NAME = "sedona_catalog"
-bucket_name = "apache-sedona-book"
 
 (processing_date, input_database, output_database) = sys.argv[1:4]
 
@@ -15,7 +17,7 @@ sedona = s.SedonaContext.create(config)
 sedona.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
 
-flood_layers_dir = f"s3a://{bucket_name}/source_data/lakehouse/floods/"
+flood_layers_dir = f"s3a://{bucket_name}/source_data/lakehouse/flood_map/"
 
 # Create a DataFrame then temporary view containing raster data
 flood_layers = sedona.read.format("binaryFile") \

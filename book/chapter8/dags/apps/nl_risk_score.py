@@ -3,9 +3,11 @@ import sys
 import pyspark.sql as sql
 import pyspark.sql.functions as f
 import sedona.spark as s
+import os
+
+bucket_name = os.environ.get("SEDONA_SOURCE_BUCKET", "sedona-book-bucket")
 
 CATALOG_NAME = "sedona_catalog"
-bucket_name = "apache-sedona-book"
 
 def normalize_column(column_name: str, wage: float) -> callable:
     def transform(df: sql.DataFrame) -> sql.DataFrame:
