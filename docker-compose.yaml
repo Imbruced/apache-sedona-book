@@ -1,4 +1,37 @@
 services:
+  geoai:
+    image: geoai
+    build:
+      context: "./cli/internal/adapter/client/imagebuilder/docker/geoai"
+    ports:
+      - "8888:8888"
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      SEDONA_SOURCE_BUCKET: ${SEDONA_SOURCE_BUCKET}
+    profiles:
+      - "chapter-7-5"
+    volumes:
+      - ./book/chapter7/RasterSegmentation.ipynb:/home/ubuntu/sedona-ai/chapter7/RasterSegmentation.ipynb
+  ors:
+    image: ors
+    ports:
+      - "8085:8082"
+    environment:
+      REBUILD_GRAPHS: True
+      ors.engine.source_file: /home/ors/files/ile-de-france-latest.osm.pbf
+    build:
+      context: "./cli/internal/adapter/client/imagebuilder/docker/ors"
+    profiles:
+      - "chapter-7-6"
+    volumes:
+      - ./book/chapter7/ors/graphs:/home/ors/graphs
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8082/ors/v2/health || exit 1" ]
+      start_period: 1m
+      interval: 10s
+      timeout: 2s
+      retries: 3
   sedona:
     image: sedona
     build:
@@ -18,6 +51,12 @@ services:
       - "chapter-6-1"
       - "chapter-6-2"
       - "chapter-7-1"
+      - "chapter-7-2"
+      - "chapter-7-3"
+      - "chapter-7-4"
+      - "chapter-7-6"
+      - "chapter-7-7"
+      - "chapter-8-4"
     volumes:
       - ./book/chapter3:/opt/workspace/chapter3
       - ./book/chapter6/VectorGeospatialVisualization.ipynb:/opt/workspace/chapter6/VectorGeospatialVisualization.ipynb
@@ -26,7 +65,14 @@ services:
       - ./book/chapter6/RasterDataTools.ipynb:/opt/workspace/chapter6/RasterDataTools.ipynb
       - ./book/chapter6/ID73_S20_W70_RP10_depth.tif:/opt/workspace/chapter6/ID73_S20_W70_RP10_depth.tif
       - ./book/chapter7/ClusteringWithApacheSedona.ipynb:/opt/workspace/chapter7/ClusteringWithApacheSedona.ipynb
+      - ./book/chapter7/OutlierDetection.ipynb:/opt/workspace/chapter7/OutlierDetection.ipynb
+      - ./book/chapter7/HotSpotAnalysis.ipynb:/opt/workspace/chapter7/HotSpotAnalysis.ipynb
+      - ./book/chapter7/AutoCorrelation.ipynb:/opt/workspace/chapter7/AutoCorrelation.ipynb
+      - ./book/chapter7/AccidentAnalysis.ipynb:/opt/workspace/chapter7/AccidentAnalysis.ipynb
+      - ./book/chapter7/GeospatialDateLakehouse.ipynb:/opt/workspace/chapter8/GeospatialDateLakehouse.ipynb
+      - ./book/chapter7/MLLib.ipynb:/opt/workspace/chapter7/MLLib.ipynb
       - ./book/source_data/density_points:/opt/workspace/chapter7/source_data/density_points
+      - ./book/source_data/hot_spot:/opt/workspace/chapter7/source_data/hot_spot
   prefect:
     image: prefect
     build:
@@ -47,13 +93,16 @@ services:
     environment:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      SEDONA_SOURCE_BUCKET: ${SEDONA_SOURCE_BUCKET}
     profiles:
       - "chapter-6-3"
+      - "chapter-8-4"
     ports:
       - "8080:8080"
     command: ["./entrypoint.sh"]
     volumes:
-      - ./book/chapter6/dags/:/opt/airflow/dags/
+      - ./book/chapter6/dags/:/opt/airflow/dags/chapter6
+      - ./book/chapter8/dags/:/opt/airflow/dags/chapter8
     restart: on-failure
   minio:
     image: minio
@@ -65,6 +114,7 @@ services:
     container_name: minio
     profiles:
       - "chapter-6-3"
+      - "chapter-8-4"
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -96,4 +146,13 @@ services:
     restart: on-failure
     volumes:
       - ./book/chapter6/geospatialdbt:/opt/workspace
-
+  postgres:
+    image: postgres:16
+    profiles:
+      - "chapter-8-4"
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: sedona
+      POSTGRES_PASSWORD: sedona
+      POSTGRES_DB: sedona

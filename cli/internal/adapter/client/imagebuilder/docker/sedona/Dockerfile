@@ -34,5 +34,6 @@ RUN pip install pyspark==3.5.2
 RUN pip install contextily
 RUN pip install folium
 RUN pip install mapclassify
+RUN pip install xgboost
 
 CMD ["/bin/bash", "./apply.sh"]

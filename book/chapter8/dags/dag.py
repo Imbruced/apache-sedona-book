@@ -6,17 +6,16 @@ from airflow.providers.apache.spark.operators.spark_sql import SparkSqlOperator
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from airflow.decorators import task_group
 
-
 CONN_ID = "spark"
-SQL_PATH = "/opt/airflow/dags/sql"
-APP_PATH = "/opt/airflow/dags/apps"
+SQL_PATH = "/opt/airflow/dags/chapter8/sql"
+APP_PATH = "/opt/airflow/dags/chapter8/apps"
 CATALOG_NAME = "sedona_catalog"
 STG_DATABASE = "stg_risk_management"
 PROD_DATABASE = "risk_management"
 
 
 def get_sql_from_file(file_name: str) -> str:
-    with open(f"dags/sql/{file_name}") as file:
+    with open(f"{SQL_PATH}/{file_name}") as file:
         return file.read()
 
 
@@ -44,10 +43,12 @@ def create_spark_submit_operator(script: str, arguments: list[str]) -> SparkSubm
         num_executors=12,
     )
 
+
 def create_task_group(
         task_group_id: str,
         script_file_name: str,
         arguments: list[str],
+        ddl_file_name: str | None = None,
 ):
     @task_group(group_id=task_group_id)
     def run_test_group():
@@ -61,11 +62,18 @@ def create_task_group(
             arguments
         )
 
+        if ddl_file_name:
+            ddl_operator = create_sql_operator_from_file(
+                sql_file_name=ddl_file_name,
+                catalog=CATALOG_NAME,
+                database=STG_DATABASE,
+            )
+
+            ddl_operator >> run_operator
+
         run_operator >> run_test_operator
 
     return run_test_group
-
-
 
 
 with DAG(
@@ -93,12 +101,6 @@ with DAG(
 
     netherlands_shape = create_sql_operator_from_file(
         sql_file_name="nl_shape_ddl.sql",
-        catalog=CATALOG_NAME,
-        database=STG_DATABASE,
-    )
-
-    buildings_table = create_sql_operator_from_file(
-        sql_file_name="nl_buildings_ddl.sql",
         catalog=CATALOG_NAME,
         database=STG_DATABASE,
     )
@@ -158,13 +160,13 @@ with DAG(
         "building_task_group",
         "nl_buildings.py",
         ["{{ ds }}", STG_DATABASE, STG_DATABASE],
+        ddl_file_name="nl_buildings_ddl.sql",
     )
 
     building_task_group_task = building_task_group()
 
     ddls = [
         netherlands_shape,
-        buildings_table,
         flood_table,
         nl_road_risk_score_table,
         nl_transportation_table,
@@ -173,7 +175,7 @@ with DAG(
 
     create_catalog >> ddls
     nl_shape << ddls
-    [nl_shape, buildings_table] >> building_task_group_task
+    [nl_shape] >> building_task_group_task
     [netherlands_shape, flood_table] >> netherlands_flood_raster
     [netherlands_shape, nl_transportation_table] >> netherlands_transportation
 
@@ -185,7 +187,6 @@ with DAG(
         netherlands_flood_raster,
         netherlands_transportation_hex_bins,
     ] >> risk_score_task_group_task
-
 
     # PROD
     netherlands_risk_score_prod = create_spark_submit_operator(
@@ -201,4 +202,3 @@ with DAG(
     )
 
     [create_catalog_prod, risk_score_task_group_task, netherlands_risk_score_table_prod] >> netherlands_risk_score_prod
-

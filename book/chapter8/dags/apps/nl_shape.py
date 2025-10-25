@@ -2,9 +2,11 @@ import sys
 
 import sedona.spark as s
 from pyspark.sql.session import SparkSession
+import os
 
+
+bucket_name = os.environ.get("SEDONA_SOURCE_BUCKET", "sedona-book-bucket")
 CATALOG_NAME = "sedona_catalog"
-bucket_name = "apache-sedona-book"
 
 (
     processing_date,

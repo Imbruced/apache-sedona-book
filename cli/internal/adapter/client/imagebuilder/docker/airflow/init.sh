@@ -7,4 +7,4 @@ sed -i -e "s|<AWS_ACCESS_KEY_ID>|$AWS_ACCESS_KEY_ID|g" -e "s|<AWS_SECRET_ACCESS_
 
 airflow connections add spark \
     --conn-type spark \
-    --conn-host local[*]
+    --conn-host local[*] || true
