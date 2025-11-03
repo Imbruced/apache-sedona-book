@@ -9,3 +9,9 @@ RUN mkdir /app
 
 COPY mysql_ddl.sql /app
 COPY migrate.sh /app
+COPY entrypoint.sh /app
+RUN chmod +x /app/entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
+
+

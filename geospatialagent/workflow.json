@@ -1,0 +1,292 @@
+{
+  "name": "Sedona workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c63dbb1e-4e5e-44d4-a4a8-82d3105b0b57",
+      "name": "When chat message received",
+      "webhookId": "088997f2-2af9-4ac6-9e04-e7ad1c489a5e"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "ministral-8b-instruct-2410",
+          "mode": "list",
+          "cachedResultName": "ministral-8b-instruct-2410"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        208
+      ],
+      "id": "0a742aaa-4372-4bf8-ac44-df05986ab878",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "rycljRDkb0O8qLL4",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        208
+      ],
+      "id": "dbf80ccd-8539-4400-93e7-f55ca1bd45fb",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://mcp_server:9080/mcp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        1104,
+        208
+      ],
+      "id": "5a8be811-8bcd-4fb6-849d-596f67923d89",
+      "name": "MCP Client"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "ministral-8b-instruct-2410",
+          "mode": "list",
+          "cachedResultName": "ministral-8b-instruct-2410"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        528,
+        224
+      ],
+      "id": "e0f3d931-47d8-48a6-a3ee-ec70198a57f1",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "rycljRDkb0O8qLL4",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Please run the query outputted by the agent {{ $('Query Validator').first().json.output }}\n\nFunction Call:\nexecute_query(sql: str) -> str\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        912,
+        0
+      ],
+      "id": "2715b7f7-0a3e-4244-bdd6-941000fc55c2",
+      "name": "Query Executor"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Please analyze the following query {{ $('Query Creator').first().json.output }}\n\nYou will be asked to validate if the SQL query is valid or not.\nIf the SQL query is valid, respond only the query, if it's invalid\nplease respond with the valid SQL query.\n\nYou can use function to validate the query:\nvalidate_query(sql: str) -> bool\n\nif it's invalid try to fix it, if it's still invalid try again, finish after succesful atempt or 5 invalid attempts",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "52488fcf-341f-4f5e-9b68-d725777c3af0",
+      "name": "Query Validator"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert geospatial analyst, your task is to assist the user\nwith geospatial insights, data interpretation, and analysis.\nYou are using Apache Sedona SQL syntax for querying geospatial data.\n\nYou have access to various geospatial datasets and tools to help\n- places it has columns id and geometry, the geometry column contains\n  point geometries representing various places.\n- buildings it has columns id and geometry, the geometry column contains\n  polygon geometries representing various buildings.\n\nYour task is to create a SQL query based on the input question.\nApache Sedona does not optimize left join, please don't use it, use only inner joins.\nSo for instance when you are asked to show the building with id 5,\nyou should respond with the SQL query:\n\nSELECT id, geometry as geometry\nFROM buildings\nWHERE id = 5;\n\nor when you are asked to find the largest building,\nyou should respond with the SQL query:\n\nSELECT id, geometry as geometry\nFROM buildings\nORDER BY ST_Area(geometry) DESC\nLIMIT 1;\n\nHere you can have some docs\n\nST_SRID\nIntroduction: Return the spatial reference system identifier (SRID) of the geometry.\n\nFormat: ST_SRID (A: Geometry)\n\nSince: v1.1.1\n\nSQL Example\n\n\nSELECT ST_SRID(ST_SetSRID(ST_GeomFromWKT('POLYGON((1 1, 8 1, 8 8, 1 8, 1 1))'), 3021))\nOutput:\n\n\n3021\n\nST_IsValid¶\nIntroduction: Test if a geometry is well-formed. The function can be invoked with just the geometry or with an additional flag (from v1.5.1). The flag alters the validity checking behavior. The flags parameter is a bitfield with the following options:\n\n0 (default): Use usual OGC SFS (Simple Features Specification) validity semantics.\n1: \"ESRI flag\", Accepts certain self-touching rings as valid, which are considered invalid under OGC standards.\nFormats:\n\n\nST_IsValid (A: Geometry)\n\nST_IsValid (A: Geometry, flag: Integer)\nSince: v1.0.0\n\nSQL Example:\n\n\nSELECT ST_IsValid(ST_GeomFromWKT('POLYGON((0 0, 10 0, 10 10, 0 10, 0 0), (15 15, 15 20, 20 20, 20 15, 15 15))'))\nOutput:\n\n\nfalse\n\nST_Transform\n\nST_Transform (A: Geometry, SourceCRS: String, TargetCRS: String, lenientMode: Boolean)\n\nST_Transform (A: Geometry, SourceCRS: String, TargetCRS: String)\n\nST_Transform (A: Geometry, TargetCRS: String)\n\nSQL Example\n\nSELECT ST_AsText(ST_Transform(ST_GeomFromText('POLYGON((170 50,170 72,-130 72,-130 50,170 50))'),'EPSG:4326', 'EPSG:32649'))\n\nSELECT ST_AsText(ST_Transform(ST_GeomFromText('POLYGON((170 50,170 72,-130 72,-130 50,170 50))'),'EPSG:4326', 'EPSG:32649', false))\nOutput:\n\n\nPOLYGON ((8766047.980342899 17809098.336766362, 5122546.516721856 18580261.912528664, 3240775.0740796793 -13688660.50985159, 4556241.924514083 -12463044.21488129, 8766047.980342899 17809098.336766362))\n\n{{ $json.chatInput }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "619a3171-c5ed-4739-b8de-d36238da264c",
+      "name": "Query Creator"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "ministral-8b-instruct-2410",
+          "mode": "list",
+          "cachedResultName": "ministral-8b-instruct-2410"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        832,
+        224
+      ],
+      "id": "cef403a2-2c56-41eb-931e-ded7e77c6085",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "rycljRDkb0O8qLL4",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://mcp_server:9080/mcp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        704,
+        224
+      ],
+      "id": "06f90bf3-57f0-418e-a8ee-22c3d47f03c4",
+      "name": "MCP Client1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Query Creator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Query Creator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Query Creator",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "Query Executor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Query Validator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Validator": {
+      "main": [
+        [
+          {
+            "node": "Query Executor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Creator": {
+      "main": [
+        [
+          {
+            "node": "Query Validator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Query Executor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Query Validator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a41f97d7-c4e1-4585-be0a-46cbc73d612b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9b8f9750493aded6c49efcceafe2bdc0afda6a7c4c590a8b240fb8e3cd2cf87b"
+  },
+  "id": "NzT6mLV26nWoyTQj",
+  "tags": []
+}

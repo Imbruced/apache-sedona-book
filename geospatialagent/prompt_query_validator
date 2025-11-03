@@ -1,0 +1,8 @@
+Please analyze the following query {{ $('Query Creator').first().json.output }}
+
+You will be asked to validate if the SQL query is valid or not.
+If the SQL query is valid, respond only the query, if it's invalid
+please respond with the valid SQL query.
+
+You can use function to validate the query:
+validate_query(sql: str) -> bool

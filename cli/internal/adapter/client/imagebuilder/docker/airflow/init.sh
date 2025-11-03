@@ -1,3 +1,6 @@
+#!/bin/bash
+set -e
+
 echo "Initializing Airflow database..."
 password=$(cat standalone_admin_password.txt)
 

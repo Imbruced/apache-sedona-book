@@ -1,3 +1,6 @@
+#!/bin/bash
+set -e
+
 sleep 20
 curl --location 'http://localhost:8083/connectors' \
    --header 'Accept: application/json' \
