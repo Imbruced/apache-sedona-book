@@ -1,0 +1,23 @@
+[project]
+name = "geospatialagent"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "apache-sedona>=1.8.0",
+    "fastmcp>=2.13.0.1",
+    "grpcio-status>=1.76.0",
+    "grpcio>=1.76.0",
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.19.0",
+    "pandas>=2.3.3",
+    "protobuf>=6.33.0",
+    "pyarrow>=22.0.0",
+    "pyspark==3.5.4",
+    "setuptools>=80.9.0",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.4.2",
+]

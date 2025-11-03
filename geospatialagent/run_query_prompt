@@ -1,0 +1,5 @@
+Please run the query outputted by the agent {{ $('Query Validator').first().json.output }}
+
+Function Call:
+execute_query(sql: str) -> str
+

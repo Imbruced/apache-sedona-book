@@ -9,4 +9,8 @@ ENV POSTGRES_USER=postgis
 ENV POSTGRES_PASSWORD=postgis
 ENV POSTGRES_DB=postgis
 ENV PGPASSWORD=postgis
-CMD ["postgres", "-c", "wal_level=logical"]
+
+COPY entrypoint.sh /app
+RUN chmod +x /app/entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
