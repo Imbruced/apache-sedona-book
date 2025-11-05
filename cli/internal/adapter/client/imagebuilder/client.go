@@ -6,12 +6,13 @@ import (
 	"context"
 	"embed"
 	"fmt"
+	"io"
+	"io/fs"
+
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/errdefs"
-	"io"
-	"io/fs"
 )
 
 //go:embed docker

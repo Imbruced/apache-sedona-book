@@ -28,9 +28,6 @@ sections:
         volumes:
           - chapter7/HotSpotAnalysis.ipynb:/opt/workspace/HotSpotAnalysis.ipynb
       - image: minio
-        post-init-command:
-          - /bin/bash
-          - /app/scripts/copy_minio.sh
         volumes:
           - scripts/copy_minio.sh:/app/scripts/copy_minio.sh
           - source_data/hot_spot:/app/sources/hot_spot

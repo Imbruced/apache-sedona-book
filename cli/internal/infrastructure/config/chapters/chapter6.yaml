@@ -10,9 +10,6 @@ sections:
         open-webui:
           path: http://localhost:8888/lab/workspaces/auto-R/tree/ManipulatingGeospatialVectorData.ipynb
       - image: minio
-        post-init-command:
-          - /bin/bash
-          - /app/scripts/copy_minio.sh
         volumes:
           - scripts/copy_minio.sh:/app/scripts/copy_minio.sh
           - source_data/transportation_barcelona:/app/sources/transportation
@@ -31,18 +28,12 @@ sections:
       - image: airflow
         volumes:
           - chapter6/dags/:/opt/airflow/dags/
-        post-init-command:
-          - /bin/bash
-          - /opt/airflow/init.sh
         open-webui:
           path: http://localhost:8080
       - image: minio
         volumes:
           - source_data/transportation:/app/sources/transportation
           - scripts/copy_minio.sh:/app/scripts/copy_minio.sh
-        post-init-command:
-          - /bin/bash
-          - /app/scripts/copy_minio.sh
   - title: Transforming your Geospatial Data with dbt
     id: transforming-your-geospatial-data-with-dbt
     images:

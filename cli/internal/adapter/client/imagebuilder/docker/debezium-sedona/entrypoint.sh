@@ -11,3 +11,5 @@ done
 ./create-connector.sh
 
 echo "✅ Debezium connector creation completed."
+
+sleep infinity

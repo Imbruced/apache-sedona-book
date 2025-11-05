@@ -5,6 +5,7 @@ import (
 	domainerrors "cli/internal/domain/errors"
 	"context"
 	"errors"
+	"sync"
 )
 
 type ImageClient interface {
@@ -30,31 +31,24 @@ func (s *Service) Build(ctx context.Context, request *dto.StartContainersRequest
 		request.UpdateBuildImageStatus(img.Image, false)
 	}
 
-	go func() {
-		errChan := s.buildImages(ctx, request)
+	err := s.buildImages(ctx, request)
+	if err != nil {
+		return err
+	}
 
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case err := <-errChan:
-				if err != nil {
-					break
-				}
-			}
-		}
-	}()
 	return nil
 }
 
-func (s *Service) buildImages(ctx context.Context, request *dto.StartContainersRequest) chan error {
-	errChan := make(chan error, 2)
+func (s *Service) buildImages(ctx context.Context, request *dto.StartContainersRequest) error {
+	var wg sync.WaitGroup
 
 	for _, img := range request.Images.GetImagesNames() {
+		wg.Add(1)
+
 		go func() {
+			defer wg.Done()
 			err := s.imageClient.Exists(ctx, img.Name, img.Tag)
 			if err != nil && !errors.Is(err, domainerrors.ErrImageNotFound) {
-				errChan <- err
 				return
 			}
 
@@ -65,7 +59,6 @@ func (s *Service) buildImages(ctx context.Context, request *dto.StartContainersR
 
 			err = s.imageClient.BuildImage(ctx, img.Name, img.Tag)
 			if err != nil {
-				errChan <- err
 				return
 			}
 
@@ -73,5 +66,7 @@ func (s *Service) buildImages(ctx context.Context, request *dto.StartContainersR
 		}()
 	}
 
-	return errChan
+	wg.Wait()
+
+	return nil
 }

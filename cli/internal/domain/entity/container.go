@@ -44,7 +44,6 @@ type ContainerRunRequest struct {
 	MountFiles         []string
 	EnvVariables       EnvVariables
 	HealthCheck        HealthCheck
-	PostInitCommand    []string
 	NetworkID          string
 	ShowInBrowser      bool
 	BrowserOpenPath    string

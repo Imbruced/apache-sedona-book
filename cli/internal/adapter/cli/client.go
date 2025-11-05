@@ -7,9 +7,10 @@ import (
 	"cli/internal/domain/dto"
 	"cli/internal/domain/entity"
 	"context"
-	"github.com/spf13/cobra"
 	"sync"
 	"time"
+
+	"github.com/spf13/cobra"
 )
 
 type ProvisionService interface {
@@ -130,16 +131,18 @@ func (c *Client) provision(ctx context.Context) *cobra.Command {
 			}
 		}()
 
+		ctxWithCancel, cancel = context.WithCancel(ctx)
+
 		go animation.BuildingImages(ctxWithCancel, startContainersResponse)
 
-		c.waitImagesToBeReady(ctx, startContainersResponse)
+		c.waitImagesToBeReady(ctxWithCancel, startContainersResponse)
 		cancel()
 
 		ctxWithCancel, cancel = context.WithCancel(ctx)
 
 		go animation.Provisioning(ctxWithCancel, startContainersResponse)
 
-		c.waitContainersToBeReady(ctx, startContainersResponse)
+		c.waitContainersToBeReady(ctxWithCancel, startContainersResponse)
 		cancel()
 
 		cmd.Println("\n 🚀 Containers started successfully.")
