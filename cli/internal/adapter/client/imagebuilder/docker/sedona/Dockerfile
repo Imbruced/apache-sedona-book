@@ -35,5 +35,6 @@ RUN pip install contextily
 RUN pip install folium
 RUN pip install mapclassify
 RUN pip install xgboost
+RUN pip install "apache-sedona[db]"
 
 CMD ["/bin/bash", "./apply.sh"]

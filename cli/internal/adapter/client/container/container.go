@@ -5,6 +5,10 @@ import (
 	domainerrors "cli/internal/domain/errors"
 	"context"
 	"fmt"
+	"io"
+	"strings"
+	"time"
+
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/image"
@@ -12,10 +16,6 @@ import (
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
-	"io"
-	"os"
-	"strings"
-	"time"
 )
 
 const (
@@ -37,45 +37,6 @@ func NewClient(cli *client.Client) *Container {
 	return &Container{
 		cli: cli,
 	}
-}
-
-func (c *Container) RunScript(ctx context.Context, containerID string, command []string) error {
-	execID, err := c.cli.ContainerExecCreate(ctx, containerID, container.ExecOptions{
-		Cmd: command,
-	})
-	if err != nil {
-		return err
-	}
-
-	resp, err := c.cli.ContainerExecAttach(ctx, execID.ID, container.ExecAttachOptions{})
-	if err != nil {
-		return err
-	}
-	defer resp.Close()
-
-	for {
-		_, err = io.Copy(os.Stdout, resp.Reader)
-		if err != nil {
-			return err
-		}
-
-		inspectResp, err := c.cli.ContainerExecInspect(ctx, execID.ID)
-		if err != nil {
-			return err
-		}
-
-		if inspectResp.Running {
-			time.Sleep(1 * time.Second)
-			continue
-		}
-
-		if inspectResp.ExitCode != 0 {
-			return fmt.Errorf("command exited with code %d", inspectResp.ExitCode)
-		}
-
-		break
-	}
-	return nil
 }
 
 func (c *Container) getFilterArgs() filters.Args {
@@ -135,7 +96,7 @@ func (c *Container) Run(ctx context.Context, request *entity.ContainerRunRequest
 	exposedPorts := make(nat.PortSet, len(request.ExposedPorts))
 	imageName := strings.Split(request.Image, ":")[0]
 	parts := strings.Split(imageName, "/")
-
+	println("Aaaa")
 	imageName = parts[len(parts)-1]
 
 	for _, containerPort := range request.ExposedPorts {

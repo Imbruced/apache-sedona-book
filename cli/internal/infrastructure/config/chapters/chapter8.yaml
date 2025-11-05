@@ -7,18 +7,12 @@ sections:
       - image: airflow
         volumes:
           - chapter8/dags/:/opt/airflow/dags/
-        post-init-command:
-          - /bin/bash
-          - /opt/airflow/init.sh
         open-webui:
           path: http://localhost:8080
       - image: minio
         volumes:
           - scripts/copy_minio.sh:/app/scripts/copy_minio.sh
           - chapter8/minio:/data
-        post-init-command:
-          - /bin/bash
-          - /app/scripts/copy_minio.sh
       - image: postgres
       - image: sedona
         open-webui:

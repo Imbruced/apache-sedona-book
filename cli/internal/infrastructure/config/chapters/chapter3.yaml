@@ -27,18 +27,9 @@ sections:
         volumes:
           - chapter3/ReadingFromPostgreSQL.ipynb:/opt/workspace/ReadingFromPostgreSQL.ipynb
       - image: postgis
-        post-init-command:
-          - /bin/bash
-          - /app/migrate.sh
       - image: mysql
-        post-init-command:
-          - /bin/bash
-          - /app/migrate.sh
       - image: mongo
       - image: debezium
-        post-init-command:
-          - /bin/bash
-          - ./create-connector.sh
       - image: kafka
   - title: "Hands-On Use Case: NYC Taxi Data Analysis"
     id: hands-on-use-case-nyc-taxi-data-analysis

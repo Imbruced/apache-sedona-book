@@ -45,6 +45,7 @@ services:
       SEDONA_SOURCE_BUCKET: ${SEDONA_SOURCE_BUCKET}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
     profiles:
       - "chapter-3-1"
       - "chapter-3-2"
@@ -68,6 +69,7 @@ services:
       - "chapter-10-1"
       - "chapter-10-2"
       - "chapter-10-3"
+      - "chapter-11-2"
     volumes:
       # chapter 3
       - ./book/chapter3/LoadingVectorDataFormats.ipynb:/opt/workspace/chapter3/LoadingVectorDataFormats.ipynb
@@ -106,6 +108,8 @@ services:
       - ./book/chapter10/OptimizingApacheSedonaProgram.ipynb:/opt/workspace/chapter10/OptimizingApacheSedonaProgram.ipynb
       - ./book/chapter10/OptimizingSpatialJoin.ipynb:/opt/workspace/chapter10/OptimizingSpatialJoin.ipynb
       - ./book/chapter10/SpatialPartitioning.ipynb:/opt/workspace/chapter10/SpatialPartitioning.ipynb
+      # extras
+      - ./book/chapter11/SedonaDBExamples.ipynb:/opt/workspace/chapter11/SedonaDBExamples.ipynb
       # source data
       - ./book/source_data/density_points:/opt/workspace/chapter7/source_data/density_points
       - ./book/source_data/hot_spot:/opt/workspace/chapter7/source_data/hot_spot

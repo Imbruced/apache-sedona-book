@@ -102,15 +102,12 @@ func (s *Service) Provision(ctx context.Context, request *dto.ProvisionRequest) 
 			return
 		}
 
-		go func() {
-			// start containers
-
-			err = s.containerService.RunContainers(ctx, runContainersRequest)
-			if err != nil {
-				errorsChan <- err
-				return
-			}
-		}()
+		// start containers
+		err = s.containerService.RunContainers(ctx, runContainersRequest)
+		if err != nil {
+			errorsChan <- err
+			return
+		}
 	}()
 
 	return runContainersRequest, nil

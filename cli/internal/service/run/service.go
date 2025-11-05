@@ -21,10 +21,7 @@ type Client interface {
 	ListContainers(ctx context.Context) ([]*entity.ContainerMetadata, error)
 	Clear(ctx context.Context, metadata *entity.ContainerMetadata) error
 	Run(ctx context.Context, arg *entity.ContainerRunRequest) (*entity.CreateContainerResponse, error)
-	//ReadLogs(ctx context.Context, containerID string) (string, error)
-	//Wait(ctx context.Context, containerID string) (<-chan container.WaitResponse, <-chan error)
 	IsHealthy(ctx context.Context, containerID string) (bool, error)
-	RunScript(ctx context.Context, containerID string, command []string) error
 	CreateNetwork(ctx context.Context, request *entity.CreateNetworkRequest) (*entity.CreateNetworkResponse, error)
 	GetNetworkID(ctx context.Context, networkName string) (*entity.Network, error)
 	RemoveNetwork(ctx context.Context, networkID string) error
@@ -59,16 +56,6 @@ func (s *Service) RunContainers(ctx context.Context, request *dto.StartContainer
 
 			if image.OpenTerminal {
 				imageToConnect = containerID
-			}
-
-			if len(image.PostInitCommand) == 0 {
-				return
-			}
-
-			err = s.client.RunScript(ctx, containerID, image.PostInitCommand)
-			if err != nil {
-				request.Errors <- err
-				return
 			}
 		}()
 	}
