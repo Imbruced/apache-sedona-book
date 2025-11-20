@@ -9,6 +9,9 @@ RUN wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoo
 RUN wget https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
 RUN wget https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/9.4.0/mysql-connector-j-9.4.0.jar
 
+RUN rm /opt/spark/jars/sedona-spark-shaded-3.5_2.12-1.8.0.jar
+COPY sedona-spark-shaded-3.5_2.12-1.8.1-SNAPSHOT.jar /opt/spark/jars
+
 RUN cp aws-java-sdk-bundle-1.12.262.jar /opt/spark/jars && \
     cp hadoop-aws-3.3.4.jar /opt/spark/jars && \
     cp postgresql-42.7.4.jar /opt/spark/jars && \

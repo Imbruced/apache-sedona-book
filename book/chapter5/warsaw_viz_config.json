@@ -5,15 +5,15 @@
       "filters": [],
       "layers": [
         {
-          "id": "fnbl5ac",
+          "id": "nbcbmjw",
           "type": "geojson",
           "config": {
-            "dataId": "most-popular-pickup",
-            "label": "most-popular-pickup",
+            "dataId": "map",
+            "label": "map",
             "color": [
-              77,
-              193,
-              156
+              18,
+              147,
+              154
             ],
             "highlightColor": [
               252,
@@ -26,28 +26,29 @@
             },
             "isVisible": true,
             "visConfig": {
-              "opacity": 0.8,
+              "opacity": 1,
               "strokeOpacity": 0.8,
               "thickness": 0.5,
               "strokeColor": [
-                119,
-                110,
-                87
+                221,
+                178,
+                124
               ],
               "colorRange": {
-                "name": "ColorBrewer Greys-7",
+                "name": "ColorBrewer Greys-8",
                 "type": "singlehue",
                 "category": "ColorBrewer",
                 "colors": [
-                  "#f7f7f7",
-                  "#d9d9d9",
-                  "#bdbdbd",
-                  "#969696",
-                  "#737373",
+                  "#252525",
                   "#525252",
-                  "#252525"
+                  "#737373",
+                  "#969696",
+                  "#bdbdbd",
+                  "#d9d9d9",
+                  "#f0f0f0",
+                  "#ffffff"
                 ],
-                "reversed": false
+                "reversed": true
               },
               "strokeColorRange": {
                 "name": "Global Warming",
@@ -77,7 +78,7 @@
               ],
               "elevationScale": 5,
               "enableElevationZoomFactor": true,
-              "stroked": true,
+              "stroked": false,
               "filled": true,
               "enable3d": false,
               "wireframe": false
@@ -117,8 +118,8 @@
           },
           "visualChannels": {
             "colorField": {
-              "name": "cnt",
-              "type": "integer"
+              "name": "index",
+              "type": "real"
             },
             "colorScale": "quantile",
             "strokeColorField": null,
@@ -136,13 +137,13 @@
       "interactionConfig": {
         "tooltip": {
           "fieldsToShow": {
-            "most-popular-pickup": [
+            "map": [
               {
-                "name": "h3_id",
+                "name": "id",
                 "format": null
               },
               {
-                "name": "cnt",
+                "name": "index",
                 "format": null
               }
             ]
@@ -177,17 +178,17 @@
     "mapState": {
       "bearing": 0,
       "dragRotate": false,
-      "latitude": 40.75347210603198,
-      "longitude": -73.93493993619852,
+      "latitude": 52.23349671402296,
+      "longitude": 21.02694804428613,
       "pitch": 0,
-      "zoom": 9.275683266565405,
+      "zoom": 14.659715978209704,
       "isSplit": false,
       "isViewportSynced": true,
       "isZoomLocked": false,
       "splitMapViewports": []
     },
     "mapStyle": {
-      "styleType": "positron",
+      "styleType": "positron-nolabels",
       "topLayerGroups": {},
       "visibleLayerGroups": {
         "label": true,
@@ -204,9 +205,9 @@
         230.92517894351974
       ],
       "backgroundColor": [
-        0,
-        0,
-        0
+        14,
+        14,
+        14
       ],
       "mapStyles": {}
     }
