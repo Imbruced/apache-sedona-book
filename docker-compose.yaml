@@ -75,6 +75,7 @@ services:
       - ./book/chapter3/LoadingVectorDataFormats.ipynb:/opt/workspace/chapter3/LoadingVectorDataFormats.ipynb
       - ./book/chapter3/popular_routes_config.json:/opt/workspace/chapter3/popular_routes_config.json
       - ./book/chapter3/populardropoff_config.json:/opt/workspace/chapter3/populardropoff_config.json
+      - ./book/chapter3/analysis_area.json:/opt/workspace/chapter3/analysis_area.json
       - ./book/chapter3/LoadingRasterData.ipynb:/opt/workspace/chapter3/LoadingRasterData.ipynb
       - ./book/chapter3/ReadingFromPostgreSQL.ipynb:/opt/workspace/chapter3/ReadingFromPostgreSQL.ipynb
       - ./book/chapter3/NewYorkTaxiAnalysis.ipynb:/opt/workspace/chapter3/NewYorkTaxiAnalysis.ipynb
@@ -104,6 +105,8 @@ services:
       - ./book/chapter7/AccidentAnalysis.ipynb:/opt/workspace/chapter7/AccidentAnalysis.ipynb
       - ./book/chapter7/GeospatialDateLakehouse.ipynb:/opt/workspace/chapter8/GeospatialDateLakehouse.ipynb
       - ./book/chapter7/MLLib.ipynb:/opt/workspace/chapter7/MLLib.ipynb
+      - ./book/chapter7/hotspot_viz_black.json:/opt/workspace/chapter7/hotspot_viz_black.json
+      - ./book/chapter7/hotspot_viz_color.json:/opt/workspace/chapter7/hotspot_viz_color.json
       # chapter 10
       - ./book/chapter10/OptimizingApacheSedonaProgram.ipynb:/opt/workspace/chapter10/OptimizingApacheSedonaProgram.ipynb
       - ./book/chapter10/OptimizingSpatialJoin.ipynb:/opt/workspace/chapter10/OptimizingSpatialJoin.ipynb

@@ -1,2 +1,22 @@
-- automatically remove network if already exist (sedona clear)
-- pull/build missing images when running the infra for the chapter
+- add more tests for the Sedona application example in chapter 2
+- add airbyte example with sedona
+- add example with the density chapter 3 page 31 (using buffer from centroid of the grid or using the density maps in the kepler)
+- add loading from Oracle example
+- add loading from redis to sedona example
+- add scheduling the pipelines with Prefect examples - DONE
+- add shceduling with Mage examples
+- add examples with streaming approach to sync the data
+- add better readme
+- add docker compose example
+- add dagster examples with sedona
+- add built sedona with saving the partitioning statistics
+
+
+
+- why sedona doesnt clip in zonal stats
+- outdated example in zonal stats docs
+- sedona vectorized udf with multiple arguments
+- bump sedona to 1.8 in the dbt part
+- add different coverage scenarios
+- add more pydeck examples
+- fix raster viz function

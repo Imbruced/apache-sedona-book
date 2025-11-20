@@ -2,6 +2,8 @@ from pyspark.sql import SparkSession
 from src.app import get_atm_within_distance_to_restaurant
 import pytest
 from shapely.geometry import Point
+from sedona.spark.sql.st_functions import ST_Transform
+from pyspark.sql.functions import col, lit
 
 
 def test_get_atm_within_distance_to_restaurant(
@@ -15,7 +17,15 @@ def test_get_atm_within_distance_to_restaurant(
             (3, "ATM C", Point(19.7, 50.2)),
         ],
         ["id", "name", "geometry"]
-    ).selectExpr("id", "name", "ST_Transform(geometry, 'EPSG:4326', 'EPSG:2180') AS geometry")
+    ).selectExpr(
+        "id",
+        "name",
+        ST_Transform(
+            col("geometry"),
+            lit("EPSG:4326"),
+            lit("EPSG:2180")
+        ).alias("geometry")
+    )
 
     restaurants = sedona_session.createDataFrame(
         [
