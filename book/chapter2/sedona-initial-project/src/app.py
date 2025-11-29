@@ -34,7 +34,11 @@ def get_places_by_category(
         filter(f"category_name = '{category}'").\
         selectExpr(
         "id",
-        "ST_Transform(ST_GeomFromWKT(wkt), 'EPSG:4326', 'EPSG:2180') AS geometry"
+        """ST_Transform(
+            ST_GeomFromWKT(wkt),
+            'EPSG:4326',
+            'EPSG:2180'
+            ) AS geometry"""
     )
 
 def get_atm_within_distance_to_restaurant(
@@ -102,6 +106,4 @@ def run():
 
 
 if __name__ == "__main__":
-    spark = SparkSession.builder.getOrCreate()
-    spark.sql("SELECT 1").show()
     run()

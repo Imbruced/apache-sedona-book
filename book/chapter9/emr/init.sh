@@ -1,8 +1,8 @@
 #!/bin/bash
-SEDONA_VERSION=1.7.2
+SEDONA_VERSION=1.8.0
 SPARK_VERSION=3.5
 SCALA_VERSION=2.12
-GEOTOOLS_VERSION=28.5
+GEOTOOLS_VERSION=33.1
 
 #EMR clusters only have ephemeral local storage. It does not really matter where we store the jars.
 sudo mkdir /jars
@@ -20,3 +20,5 @@ sudo python3 -m pip install geopandas
 sudo python3 -m pip install keplergl==0.3.2
 sudo python3 -m pip install pydeck==0.8.0
 sudo python3 -m pip install attrs matplotlib descartes apache-sedona==${SEDONA_VERSION}
+
+sudo alternatives --set java /usr/lib/jvm/java-11-amazon-corretto.x86_64/bin/java

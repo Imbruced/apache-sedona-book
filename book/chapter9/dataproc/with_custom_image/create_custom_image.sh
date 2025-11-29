@@ -3,14 +3,18 @@ set -e
 
 PROJECT_ID="YOUR_PROJECT_ID"
 YOUR_CUSTOM_IMAGE_NAME="apache-sedona"
+BUCKET_NAME=YOUR_BUCKET_NAME
+
+git clone https://github.com/GoogleCloudDataproc/custom-images.git
+
+cd custom-images
 
 python3 generate_custom_image.py \
     --image-name=${YOUR_CUSTOM_IMAGE_NAME} \
     --dataproc-version=2.2-ubuntu22 \
-    --customization-script=init.sh \
+    --customization-script=../init.sh \
     --zone=europe-west1-b \
-    --gcs-bucket=you_bucket
-
+    --gcs-bucket=${BUCKET_NAME}
 
 # create cluster
 gcloud dataproc clusters create apache-sedona-cluster \
