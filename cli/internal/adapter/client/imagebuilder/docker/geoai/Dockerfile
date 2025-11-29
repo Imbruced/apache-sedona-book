@@ -1,6 +1,7 @@
-FROM ghcr.io/osgeo/gdal:ubuntu-full-3.11.0
+FROM ghcr.io/osgeo/gdal:ubuntu-full-3.12.0
 
-RUN apt-get update && apt-get install -y python3-pip
+RUN apt-get update
+RUN apt-get install -y python3-pip
 
 RUN pip3 install --break-system-packages uv
 
@@ -20,6 +21,8 @@ ENV SEDONA_VERSION=1.8.0
 ENV GEOTOOLS_VERSION=1.8.0-33.1
 ENV SPARK_VERSION_MAJOR=3.5
 ENV SCALA_VERSION=2.12
+
+RUN apt-get install -y wget
 
 RUN wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar
 RUN wget https://repo1.maven.org/maven2/org/apache/sedona/sedona-spark-shaded-${SPARK_VERSION_MAJOR}_${SCALA_VERSION}/${SEDONA_VERSION}/sedona-spark-shaded-${SPARK_VERSION_MAJOR}_${SCALA_VERSION}-${SEDONA_VERSION}.jar && \

@@ -1,0 +1,27 @@
+{
+  "schema": {
+    "type": "struct",
+    "fields": [
+      {
+        "type": "string",
+        "optional": true,
+        "field": "name"
+      },
+      ...
+    ]
+  },
+  "payload": {
+    "before": null,
+    "after": {
+      "name": "Point A",
+      ...
+    },
+    "source": {
+      "version": "2.3.4.Final",
+      "connector": "postgresql",
+      "name": "sedona-debezium",
+      ...
+      "table": "points"
+    }
+  }
+}

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-SEDONA_VERSION=1.7.2
+SEDONA_VERSION=1.8.0
 SPARK_VERSION=3.5
 SCALA_VERSION=2.12
-GEOTOOLS_VERSION=28.5
+GEOTOOLS_VERSION=33.1
 SUBNET_ID="YOUR_SUBNET_ID"
 
 # create s3 bucket to store jar files
@@ -20,9 +20,10 @@ config=$(sed -e "s|<SPARK_VERSION>|$SPARK_VERSION|g" -e "s|<SCALA_VERSION>|$SCAL
 # create default roles
 aws emr create-default-roles
 
+# To create subnet follow the instructions here: https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-vpc-host-job-flows.html
 # create EMR cluster
 aws emr create-cluster \
-    --release-label emr-7.8.0 \
+    --release-label emr-7.12.0 \
     --instance-type m1.large \
     --use-default-roles \
     --applications Name=Spark \

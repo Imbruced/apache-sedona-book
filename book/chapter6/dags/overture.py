@@ -22,7 +22,7 @@ with DAG(
 
     spark_submit = SparkSubmitOperator(
         task_id="spark_submit",
-        application="/opt/airflow/dags/app.py",
+        application="/opt/airflow/dags/chapter6/app.py",
         conn_id="spark",
         executor_memory="2g",
         driver_memory="1g",
